@@ -1,0 +1,20 @@
+{
+  "title": "سباق التجربة الأول",
+  "titleEnglish": "First Test Race",
+  "description": "سباق تجريبي لاختبار نظام إدارة السباقات الجديد في نادي الكويت للسيارات",
+  "raceType": "سرعة",
+  "track": "الحلبة الرئيسية",
+  "startDate": "2025-02-15",
+  "endDate": "2025-02-15",
+  "startTime": "10:00",
+  "endTime": "18:00",
+  "maxParticipants": 30,
+  "requiredMarshalls": {
+    "flagMarshal": 2,
+    "trackMarshal": 4,
+    "pitMarshal": 2,
+    "emergencyMarshal": 1,
+    "chiefMarshal": 1
+  },
+  "experienceLevel": "intermediate"
+}
