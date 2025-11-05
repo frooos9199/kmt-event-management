@@ -3,16 +3,10 @@ import TestUsers from '../components/TestUsers';
 import './KMT-Auth-Original.css';
 
 const Auth = ({ onPageChange }) => {
-  // const [userType, setUserType] = useState('worker'); // Commented out unused state
   const [showTestUsers, setShowTestUsers] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    marshalNumber: '', // إضافة رقم المارشال
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    employeeId: ''
+    username: '', // حقل موحد للإيميل أو رقم المارشال
+    password: ''
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -44,10 +38,15 @@ const Auth = ({ onPageChange }) => {
     setMessage('');
 
     try {
-      // تحديد البيانات المطلوبة للطلب حسب طريقة الدخول
-      const requestData = formData.marshalNumber 
-        ? { marshalNumber: formData.marshalNumber, password: formData.password }
-        : { email: formData.email, password: formData.password };
+      // تحديد نوع البيانات بذكاء
+      const { username, password } = formData;
+      
+      // إذا كان يحتوي على @ فهو إيميل (إدمن)
+      // إذا كان رقم أو يبدأ بـ KMT فهو مارشال
+      const isEmail = username.includes('@');
+      const requestData = isEmail 
+        ? { email: username, password }
+        : { marshalNumber: username, password };
 
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/auth/login`, {
         method: 'POST',
@@ -93,7 +92,7 @@ const Auth = ({ onPageChange }) => {
         <div className="auth-content">
           <div className="auth-tabs">
             <button className="auth-tab active">
-              تسجيل دخول المارشال | Marshall Login
+              🏁 تسجيل الدخول | Login
             </button>
           </div>
 
@@ -105,28 +104,30 @@ const Auth = ({ onPageChange }) => {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label">🏁 رقم المارشال | Marshal Number</label>
+              <label className="form-label">👤 اسم المستخدم | Username</label>
               <input
                 type="text"
-                name="marshalNumber"
-                value={formData.marshalNumber}
+                name="username"
+                value={formData.username}
                 onChange={handleInputChange}
                 required
-                placeholder="100 أو KMT-100"
+                placeholder="admin@kmt.com أو 100 أو KMT-100"
                 className="form-input"
               />
+              <small className="form-help">
+                💡 أدخل الإيميل للإدمن أو رقم المارشال
+              </small>
             </div>
 
             <div className="form-group">
-              <label className="form-label">🔒 Password | كلمة المرور</label>
+              <label className="form-label">🔒 كلمة المرور | Password</label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                placeholder="كلمة المرور (1-6 للحسابات الجديدة)"
-                minLength="1"
+                placeholder="كلمة المرور"
                 className="form-input"
               />
             </div>
@@ -142,19 +143,10 @@ const Auth = ({ onPageChange }) => {
                   جاري تسجيل الدخول...
                 </>
               ) : (
-                '🏁 تسجيل دخول | Login'
+                '🚀 دخول | Login'
               )}
             </button>
           </form>
-
-          <div className="auth-footer-section">
-            <button 
-              onClick={() => onPageChange('marshal-registration')}
-              className="register-link-btn"
-            >
-              ليس لديك حساب؟ إنشاء حساب مارشال جديد 🏁
-            </button>
-          </div>
 
           <button 
             onClick={() => setShowTestUsers(!showTestUsers)}
@@ -212,13 +204,21 @@ const Auth = ({ onPageChange }) => {
               <div style={{
                 marginTop: '1rem',
                 padding: '1rem',
-                backgroundColor: '#f8f8f8',
+                backgroundColor: '#f0f9ff',
                 borderRadius: '8px',
                 fontSize: '0.9rem',
-                color: '#666'
+                color: '#1e40af',
+                borderLeft: '4px solid #3b82f6'
               }}>
-                💡 <strong>تلميح:</strong> اكتب في Email: <code>A@A.com</code> أو <code>B@B.com</code><br/>
-                وفي Password: <code>123456</code> أو اضغط على البطاقات أعلاه
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <strong>💡 طريقة تسجيل الدخول | How to Login</strong>
+                </div>
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <strong>🛡️ للإدمن:</strong> admin@kmt.com + admin123
+                </div>
+                <div>
+                  <strong>🏁 للمارشال:</strong> 100 أو KMT-100 + 123456
+                </div>
               </div>
             </div>
           )}
