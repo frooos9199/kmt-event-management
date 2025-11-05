@@ -36,10 +36,19 @@ const MarshalManagement = ({ onPageChange }) => {
   const fetchMarshals = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5001/api/marshals');
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://kmt-event-management.onrender.com/api/users/marshals', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setMarshals(data);
+      } else {
+        console.error('فشل في جلب المارشال:', response.status);
+        alert('فشل في جلب البيانات');
       }
     } catch (error) {
       console.error('خطأ في جلب المارشال:', error);

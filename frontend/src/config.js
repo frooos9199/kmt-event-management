@@ -1,5 +1,5 @@
 // إعدادات النظام المركزية
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
 
 // الوظائف المساعدة للـ API
 export const apiCall = async (endpoint, options = {}) => {
