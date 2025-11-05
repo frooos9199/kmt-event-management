@@ -46,7 +46,7 @@ const adminUser = {
 // Auth routes
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, marshalNumber } = req.body;
     
     // Check admin login
     if (email === adminUser.email && password === adminUser.password) {
@@ -67,14 +67,27 @@ app.post('/api/auth/login', async (req, res) => {
           id: 'admin',
           email: adminUser.email,
           name: adminUser.name,
-          role: 'admin'
+          role: 'admin',
+          userType: 'manager'  // تصحيح نوع المستخدم للأدمن
         }
       });
     }
     
     // Check marshal login
     const marshals = dataManager.getMarshals();
-    const marshal = marshals.find(m => m.email === email && m.password === password);
+    let marshal = null;
+    
+    // البحث بالإيميل أو رقم المارشال
+    if (email) {
+      marshal = marshals.find(m => m.email === email && m.password === password);
+    } else if (marshalNumber) {
+      // البحث برقم المارشال (إزالة KMT- إذا وجد)
+      const cleanNumber = marshalNumber.replace('KMT-', '');
+      marshal = marshals.find(m => 
+        (m.marshalNumber === cleanNumber || m.marshalNumber === marshalNumber) && 
+        m.password === password
+      );
+    }
     
     if (marshal) {
       // Update last login time
@@ -101,6 +114,7 @@ app.post('/api/auth/login', async (req, res) => {
           email: marshal.email,
           name: marshal.fullName,
           role: 'marshal',
+          userType: 'marshall',  // تصحيح نوع المستخدم للمارشال
           marshalNumber: marshal.marshalNumber,
           hasChangedPassword: marshal.hasChangedPassword
         }
