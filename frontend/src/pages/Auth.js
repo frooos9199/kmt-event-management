@@ -8,6 +8,7 @@ const Auth = ({ onPageChange }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    marshalNumber: '', // إضافة رقم المارشال
     password: '',
     confirmPassword: '',
     phone: '',
@@ -43,9 +44,12 @@ const Auth = ({ onPageChange }) => {
     setMessage('');
 
     try {
-      const requestData = { email: formData.email, password: formData.password };
+      // تحديد البيانات المطلوبة للطلب حسب طريقة الدخول
+      const requestData = formData.marshalNumber 
+        ? { marshalNumber: formData.marshalNumber, password: formData.password }
+        : { email: formData.email, password: formData.password };
 
-      const response = await fetch('http://localhost:5001/api/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,14 +105,14 @@ const Auth = ({ onPageChange }) => {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label">📧 Email | البريد الإلكتروني</label>
+              <label className="form-label">🏁 رقم المارشال | Marshal Number</label>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                name="marshalNumber"
+                value={formData.marshalNumber}
                 onChange={handleInputChange}
                 required
-                placeholder="A@A.com أو B@B.com"
+                placeholder="100 أو KMT-100"
                 className="form-input"
               />
             </div>
@@ -121,8 +125,8 @@ const Auth = ({ onPageChange }) => {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                placeholder="123456"
-                minLength="6"
+                placeholder="كلمة المرور (1-6 للحسابات الجديدة)"
+                minLength="1"
                 className="form-input"
               />
             </div>
@@ -166,27 +170,42 @@ const Auth = ({ onPageChange }) => {
                 <div 
                   className="test-user-card manager"
                   onClick={() => handleLogin({
-                    email: 'A@A.com',
+                    email: 'admin@kmt.com',
                     userType: 'manager',
-                    fullName: 'Manager Admin'
+                    fullName: 'مدير النظام'
                   })}
                 >
                   <div className="test-user-role">👔 مدير | Manager</div>
-                  <div className="test-user-email">📧 A@A.com</div>
+                  <div className="test-user-email">📧 admin@kmt.com</div>
+                  <div className="test-user-password">🔒 admin123</div>
+                </div>
+                
+                <div 
+                  className="test-user-card worker"
+                  onClick={() => handleLogin({
+                    id: 'KMT-100',
+                    marshalNumber: '100',
+                    userType: 'marshall', 
+                    fullName: 'أحمد محمد الكويتي'
+                  })}
+                >
+                  <div className="test-user-role">🏁 مارشال | Marshal</div>
+                  <div className="test-user-email">🏁 KMT-100</div>
                   <div className="test-user-password">🔒 123456</div>
                 </div>
                 
                 <div 
                   className="test-user-card worker"
                   onClick={() => handleLogin({
-                    email: 'B@B.com',
-                    userType: 'worker', 
-                    fullName: 'Worker User'
+                    id: 'KMT-102',
+                    marshalNumber: '102',
+                    userType: 'marshall', 
+                    fullName: 'مارشال رقم 102'
                   })}
                 >
-                  <div className="test-user-role">🏁 مارشال | Marshall</div>
-                  <div className="test-user-email">📧 B@B.com</div>
-                  <div className="test-user-password">🔒 123456</div>
+                  <div className="test-user-role">🏁 مارشال جديد | New Marshal</div>
+                  <div className="test-user-email">🏁 KMT-102</div>
+                  <div className="test-user-password">🔒 3</div>
                 </div>
               </div>
               
