@@ -2,14 +2,15 @@
   "name": "kmt-demo-backend",
   "version": "1.0.0",
   "description": "KMT Demo Backend for Quick Deployment",
-  "main": "demo-backend.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node demo-backend.js",
-    "dev": "node demo-backend.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2"
   },
   "engines": {
     "node": ">=18.0.0"

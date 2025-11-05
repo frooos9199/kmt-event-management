@@ -1,10 +1,12 @@
 // حل مؤقت: Backend بسيط للعرض التوضيحي
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const auth = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'eventpro_secret_key_2024';
 
 // CORS
 app.use(cors({
@@ -110,9 +112,15 @@ app.post('/api/auth/login', (req, res) => {
   
   // إذا كان تسجيل دخول بالبريد الإلكتروني (للمدير)
   if (email && email === 'admin@kmt.com' && password === 'admin123') {
+    const token = jwt.sign(
+      { userId: 'admin', userType: 'manager', email: email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
     return res.json({
       success: true,
-      token: 'mock-admin-token',
+      token: token,
       user: { id: 'admin', email, userType: 'manager', fullName: 'مدير النظام' }
     });
   }
@@ -127,9 +135,15 @@ app.post('/api/auth/login', (req, res) => {
       // تحديث آخر دخول
       marshal.lastLogin = new Date().toISOString();
       
+      const token = jwt.sign(
+        { userId: marshal.id, userType: 'marshall', marshalNumber: marshal.marshalNumber },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      
       return res.json({
         success: true,
-        token: 'mock-marshal-token',
+        token: token,
         user: { ...marshal, userType: 'marshall' }
       });
     }
@@ -140,9 +154,16 @@ app.post('/api/auth/login', (req, res) => {
     const marshal = mockMarshals.find(m => m.email === email);
     if (marshal && marshal.password === password) {
       marshal.lastLogin = new Date().toISOString();
+      
+      const token = jwt.sign(
+        { userId: marshal.id, userType: 'marshall', marshalNumber: marshal.marshalNumber },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      
       return res.json({
         success: true,
-        token: 'mock-marshal-token',
+        token: token,
         user: { ...marshal, userType: 'marshall' }
       });
     }
