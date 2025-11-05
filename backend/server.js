@@ -199,6 +199,67 @@ app.get('/api/users/marshals', (req, res) => {
   res.json({ marshals: mockMarshals });
 });
 
+// تحديث ملف المارشال الشخصي
+app.put('/api/users/profile', (req, res) => {
+  const { marshallInfo } = req.body;
+  
+  // التحقق من وجود Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ message: 'مطلوب تسجيل الدخول' });
+  }
+
+  // في النظام التوضيحي، نحدث المارشال الأول
+  // في النظام الحقيقي، نحصل على معرف المستخدم من الـ token
+  const marshalIndex = mockMarshals.findIndex(m => m.id === 'KMT-100');
+  
+  if (marshalIndex === -1) {
+    return res.status(404).json({ message: 'المارشال غير موجود' });
+  }
+
+  // دمج البيانات الجديدة مع البيانات الموجودة
+  const updatedMarshal = {
+    ...mockMarshals[marshalIndex],
+    ...marshallInfo,
+    updatedAt: new Date().toISOString()
+  };
+
+  // تحديث المارشال في القائمة
+  mockMarshals[marshalIndex] = updatedMarshal;
+
+  res.json({
+    message: 'تم تحديث الملف الشخصي بنجاح',
+    user: {
+      ...updatedMarshal,
+      userType: 'marshall'
+    }
+  });
+});
+
+// الحصول على معلومات المارشال الشخصية
+app.get('/api/users/profile', (req, res) => {
+  // التحقق من وجود Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ message: 'مطلوب تسجيل الدخول' });
+  }
+
+  // في النظام التوضيحي، نعرض المارشال الأول
+  // في النظام الحقيقي، نحصل على معرف المستخدم من الـ token
+  const marshal = mockMarshals.find(m => m.id === 'KMT-100');
+  
+  if (!marshal) {
+    return res.status(404).json({ message: 'المارشال غير موجود' });
+  }
+
+  res.json({
+    user: {
+      ...marshal,
+      userType: 'marshall'
+    }
+  });
+});
+
 // Races endpoints
 app.get('/api/races', (req, res) => {
   res.json({ races: mockRaces });

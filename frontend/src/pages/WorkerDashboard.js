@@ -19,7 +19,8 @@ const WorkerDashboard = ({ onPageChange }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const response = await fetch('http://localhost:5001/api/users/profile', {
+          const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+          const response = await fetch(`${API_URL}/api/users/profile`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`
@@ -139,7 +140,8 @@ const WorkerDashboard = ({ onPageChange }) => {
           try {
             // إرسال الصورة للخادم مع الحفاظ على جميع البيانات الموجودة
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5001/api/users/profile', {
+            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+            const response = await fetch(`${API_URL}/api/users/profile`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',

@@ -113,7 +113,8 @@ const MarshalProfile = ({ onPageChange }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/users/profile', {
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const response = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
