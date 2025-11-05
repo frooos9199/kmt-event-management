@@ -1,6 +1,7 @@
 // حل مؤقت: Backend بسيط للعرض التوضيحي
 const express = require('express');
 const cors = require('cors');
+const auth = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -205,64 +206,102 @@ app.get('/api/users/marshals', (req, res) => {
 });
 
 // تحديث ملف المارشال الشخصي
-app.put('/api/users/profile', (req, res) => {
-  const { marshallInfo } = req.body;
-  
-  // التحقق من وجود Authorization header
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ message: 'مطلوب تسجيل الدخول' });
-  }
+app.put('/api/users/profile', auth, async (req, res) => {
+  try {
+    const { marshallInfo } = req.body;
+    const userId = req.user._id || req.user.userId || req.user.id;
 
-  // في النظام التوضيحي، نحدث المارشال الأول
-  // في النظام الحقيقي، نحصل على معرف المستخدم من الـ token
-  const marshalIndex = mockMarshals.findIndex(m => m.id === 'KMT-100');
-  
-  if (marshalIndex === -1) {
-    return res.status(404).json({ message: 'المارشال غير موجود' });
-  }
+    console.log('Profile update request:', { userId, marshallInfo });
 
-  // دمج البيانات الجديدة مع البيانات الموجودة
-  const updatedMarshal = {
-    ...mockMarshals[marshalIndex],
-    ...marshallInfo,
-    updatedAt: new Date().toISOString()
-  };
-
-  // تحديث المارشال في القائمة
-  mockMarshals[marshalIndex] = updatedMarshal;
-
-  res.json({
-    message: 'تم تحديث الملف الشخصي بنجاح',
-    user: {
-      ...updatedMarshal,
-      userType: 'marshall'
+    // البحث عن المارشال باستخدام معرف المستخدم
+    let marshalIndex = -1;
+    
+    // البحث بطرق مختلفة للعثور على المارشال
+    if (typeof userId === 'string' && userId.startsWith('KMT-')) {
+      marshalIndex = mockMarshals.findIndex(m => m.id === userId);
+    } else if (req.user.marshalNumber) {
+      marshalIndex = mockMarshals.findIndex(m => m.marshalNumber === req.user.marshalNumber);
+    } else {
+      // البحث في حقول أخرى
+      marshalIndex = mockMarshals.findIndex(m => 
+        m.id === userId || 
+        m.marshalNumber === userId || 
+        m.email === req.user.email
+      );
     }
-  });
+
+    if (marshalIndex === -1) {
+      console.log('Marshal not found. Available marshals:', mockMarshals.map(m => ({ id: m.id, marshalNumber: m.marshalNumber })));
+      return res.status(404).json({ message: 'المارشال غير موجود' });
+    }
+
+    // دمج البيانات الجديدة مع البيانات الموجودة
+    const updatedMarshal = {
+      ...mockMarshals[marshalIndex],
+      marshallInfo: {
+        ...mockMarshals[marshalIndex].marshallInfo,
+        ...marshallInfo
+      },
+      updatedAt: new Date().toISOString()
+    };
+
+    // تحديث المارشال في القائمة
+    mockMarshals[marshalIndex] = updatedMarshal;
+
+    console.log('Profile updated successfully for marshal:', updatedMarshal.id);
+
+    res.json({
+      message: 'تم تحديث الملف الشخصي بنجاح',
+      user: {
+        ...updatedMarshal,
+        userType: 'marshall'
+      }
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'خطأ في الخادم' });
+  }
 });
 
 // الحصول على معلومات المارشال الشخصية
-app.get('/api/users/profile', (req, res) => {
-  // التحقق من وجود Authorization header
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ message: 'مطلوب تسجيل الدخول' });
-  }
+app.get('/api/users/profile', auth, async (req, res) => {
+  try {
+    const userId = req.user._id || req.user.userId || req.user.id;
 
-  // في النظام التوضيحي، نعرض المارشال الأول
-  // في النظام الحقيقي، نحصل على معرف المستخدم من الـ token
-  const marshal = mockMarshals.find(m => m.id === 'KMT-100');
-  
-  if (!marshal) {
-    return res.status(404).json({ message: 'المارشال غير موجود' });
-  }
+    console.log('Profile fetch request:', { userId });
 
-  res.json({
-    user: {
-      ...marshal,
-      userType: 'marshall'
+    // البحث عن المارشال باستخدام معرف المستخدم
+    let marshal = null;
+    
+    // البحث بطرق مختلفة للعثور على المارشال
+    if (typeof userId === 'string' && userId.startsWith('KMT-')) {
+      marshal = mockMarshals.find(m => m.id === userId);
+    } else if (req.user.marshalNumber) {
+      marshal = mockMarshals.find(m => m.marshalNumber === req.user.marshalNumber);
+    } else {
+      // البحث في حقول أخرى
+      marshal = mockMarshals.find(m => 
+        m.id === userId || 
+        m.marshalNumber === userId || 
+        m.email === req.user.email
+      );
     }
-  });
+    
+    if (!marshal) {
+      console.log('Marshal not found. Available marshals:', mockMarshals.map(m => ({ id: m.id, marshalNumber: m.marshalNumber })));
+      return res.status(404).json({ message: 'المارشال غير موجود' });
+    }
+
+    res.json({
+      user: {
+        ...marshal,
+        userType: 'marshall'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'خطأ في الخادم' });
+  }
 });
 
 // Races endpoints

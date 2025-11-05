@@ -51,24 +51,51 @@ const MarshalProfile = ({ onPageChange }) => {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
       
-      // تحميل البيانات الموجودة إذا كانت متوفرة
-      if (parsedUser.marshallInfo) {
-        setFormData({
-          profileImage: parsedUser.marshallInfo.profileImage || '',
-          dateOfBirth: parsedUser.marshallInfo.dateOfBirth || '',
-          nationality: parsedUser.marshallInfo.nationality || '',
-          nationalId: parsedUser.marshallInfo.nationalId || '',
-          trackSpecializations: parsedUser.marshallInfo.trackSpecializations || [],
-          medicalInfo: parsedUser.marshallInfo.medicalInfo || {
-            bloodType: '', allergies: '', medications: ''
-          },
-          experienceLevel: parsedUser.marshallInfo.experienceLevel || 'beginner',
-          certifications: parsedUser.marshallInfo.certifications || [],
-          languages: parsedUser.marshallInfo.languages || []
-        });
-      }
+      // تحميل البيانات من الخادم
+      loadProfileFromServer();
     }
   }, []);
+
+  const loadProfileFromServer = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      
+      const response = await fetch(`${API_URL}/api/users/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const userInfo = data.user;
+        
+        // تحديث البيانات المحلية
+        localStorage.setItem('userData', JSON.stringify(userInfo));
+        setUser(userInfo);
+        
+        // تحديث النموذج بالبيانات المحفوظة
+        if (userInfo.marshallInfo) {
+          setFormData({
+            profileImage: userInfo.marshallInfo.profileImage || '',
+            dateOfBirth: userInfo.marshallInfo.dateOfBirth || '',
+            nationality: userInfo.marshallInfo.nationality || '',
+            nationalId: userInfo.marshallInfo.nationalId || '',
+            trackSpecializations: userInfo.marshallInfo.trackSpecializations || [],
+            medicalInfo: userInfo.marshallInfo.medicalInfo || {
+              bloodType: '', allergies: '', medications: ''
+            },
+            experienceLevel: userInfo.marshallInfo.experienceLevel || 'beginner',
+            certifications: userInfo.marshallInfo.certifications || [],
+            languages: userInfo.marshallInfo.languages || []
+          });
+        }
+      }
+    } catch (error) {
+      console.error('خطأ في تحميل البيانات:', error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
