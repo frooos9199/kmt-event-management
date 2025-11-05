@@ -1,0 +1,412 @@
+/* تصميم كروت المارشال */
+.marshal-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e31e24;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 12px 0;
+  box-shadow: 0 8px 25px rgba(227, 30, 36, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Tajawal', Arial, sans-serif;
+}
+
+.marshal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #e31e24 0%, #ffdd00 50%, #1a1a1a 100%);
+}
+
+.marshal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(227, 30, 36, 0.25);
+  border-color: #ffdd00;
+}
+
+.marshal-card.clickable {
+  cursor: pointer;
+}
+
+.marshal-card.clickable:hover {
+  background: linear-gradient(145deg, #fff5f5 0%, #fef5e7 100%);
+}
+
+/* أنواع مختلفة من الكروت */
+.marshal-card.compact {
+  padding: 15px;
+  max-width: 300px;
+}
+
+.marshal-card.detailed {
+  min-height: 280px;
+}
+
+.marshal-card.grid-item {
+  width: 100%;
+}
+
+/* Badge للحالة */
+.status-badge {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* تحسين عرض التفاصيل */
+.marshal-card.compact {
+  padding: 15px;
+  max-width: 320px;
+  min-height: 300px;
+}
+
+/* صورة المارشال */
+.marshal-avatar {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 15px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e31e24;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e31e24 0%, #ff6b6b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  border: 3px solid #ffdd00;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid white;
+}
+
+.status-indicator.online {
+  background-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+}
+
+.status-indicator.offline {
+  background-color: #6c757d;
+}
+
+/* معلومات المارشال */
+.marshal-info {
+  text-align: center;
+}
+
+.marshal-header {
+  margin-bottom: 12px;
+}
+
+.marshal-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+}
+
+.marshal-id {
+  background: linear-gradient(135deg, #e31e24 0%, #ff4757 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* تفاصيل المارشال */
+.marshal-details {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.detail-icon {
+  font-size: 16px;
+  min-width: 20px;
+}
+
+.detail-text {
+  font-size: 14px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.experience-badge {
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* التخصصات */
+.specializations {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.specialization-tag {
+  background: linear-gradient(135deg, #ffdd00 0%, #ffc107 100%);
+  color: #1a1a1a;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid #e0a800;
+}
+
+.more-specs {
+  background: #6c757d;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* حالة العمل */
+.work-status {
+  margin: 10px 0;
+}
+
+.status-badge {
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* أزرار الإجراءات */
+.marshal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e9ecef;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.view-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+.contact-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.assign-btn {
+  background: linear-gradient(135deg, #e31e24 0%, #ff4757 100%);
+  color: white;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  color: #1a1a1a;
+}
+
+.action-icon {
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+}
+
+/* الإحصائيات المدمجة */
+.compact-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e9ecef;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e31e24;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* تخطيط الشبكة */
+.marshals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* تصميم متجاوب */
+@media (max-width: 768px) {
+  .marshal-card {
+    margin: 8px 0;
+    padding: 15px;
+  }
+  
+  .marshals-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .marshal-actions {
+    gap: 6px;
+  }
+  
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .marshal-card {
+    padding: 12px;
+  }
+  
+  .marshal-name {
+    font-size: 16px;
+  }
+  
+  .specializations {
+    gap: 4px;
+  }
+  
+  .specialization-tag {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+}
+
+/* تأثيرات التحميل */
+.marshal-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.marshal-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* تأثيرات التفاعل */
+.marshal-card:active {
+  transform: scale(0.98);
+}
+
+.action-btn:active {
+  transform: translateY(-1px) scale(0.95);
+}
+
+/* تصميم خاص للحالات المختلفة */
+.marshal-card.selected {
+  border-color: #ffdd00;
+  background: linear-gradient(145deg, #fff9e6 0%, #fef5e7 100%);
+  box-shadow: 0 0 0 3px rgba(255, 221, 0, 0.3);
+}
+
+.marshal-card.unavailable {
+  opacity: 0.6;
+  filter: grayscale(20%);
+}
+
+.marshal-card.featured {
+  background: linear-gradient(145deg, #e31e24 0%, #ff4757 100%);
+  color: white;
+  border-color: #ffdd00;
+}
+
+.marshal-card.featured .marshal-name,
+.marshal-card.featured .detail-text {
+  color: white;
+}
+
+.marshal-card.featured .marshal-id {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}

@@ -1,0 +1,205 @@
+/* إحصائيات الإشعارات */
+.notifications-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--kmt-spacing-md);
+  margin-bottom: var(--kmt-spacing-lg);
+}
+
+.stat-card {
+  background: var(--kmt-white);
+  padding: var(--kmt-spacing-md);
+  border-radius: var(--kmt-radius-lg);
+  box-shadow: var(--kmt-shadow);
+  text-align: center;
+  border: 2px solid var(--kmt-gray-medium);
+}
+
+.stat-card.unread {
+  border-color: var(--kmt-secondary);
+  background: linear-gradient(135deg, #fff, #fef7f7);
+}
+
+.stat-card.read {
+  border-color: var(--kmt-green);
+  background: linear-gradient(135deg, #fff, #f7fef7);
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--kmt-primary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--kmt-gray-dark);
+  font-size: 0.9rem;
+}
+
+/* أزرار الإجراءات */
+.notifications-actions {
+  margin-bottom: var(--kmt-spacing-lg);
+  text-align: center;
+}
+
+/* قائمة الإشعارات */
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kmt-spacing-md);
+}
+
+.notification-card {
+  background: var(--kmt-white);
+  border-radius: var(--kmt-radius-lg);
+  padding: var(--kmt-spacing-lg);
+  box-shadow: var(--kmt-shadow);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kmt-spacing-md);
+  transition: all 0.3s ease;
+  border-right: 4px solid transparent;
+}
+
+.notification-card.unread {
+  border-right-color: var(--kmt-secondary);
+  background: linear-gradient(135deg, #fff, #fef7f7);
+}
+
+.notification-card.read {
+  border-right-color: var(--kmt-gray-medium);
+  opacity: 0.8;
+}
+
+.notification-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--kmt-shadow-lg);
+}
+
+.notification-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--kmt-gray-light);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  margin: 0 0 0.5rem 0;
+  color: var(--kmt-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.notification-message {
+  margin: 0 0 0.5rem 0;
+  color: var(--kmt-gray-dark);
+  line-height: 1.5;
+}
+
+.notification-time {
+  font-size: 0.85rem;
+  color: var(--kmt-gray-dark);
+  opacity: 0.7;
+}
+
+.notification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.notification-btn {
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.read-btn {
+  background: var(--kmt-green);
+  color: white;
+}
+
+.read-btn:hover {
+  background: #00994a;
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  background: var(--kmt-secondary);
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #d01e24;
+  transform: scale(1.1);
+}
+
+.view-btn {
+  background: var(--kmt-blue);
+  color: white;
+}
+
+.view-btn:hover {
+  background: #003570;
+  transform: scale(1.1);
+}
+
+/* حالة فارغة */
+.empty-state {
+  text-align: center;
+  padding: var(--kmt-spacing-xl);
+  color: var(--kmt-gray-dark);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--kmt-spacing-md);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin-bottom: var(--kmt-spacing-sm);
+  color: var(--kmt-primary);
+}
+
+/* استجابة للجوال */
+@media (max-width: 768px) {
+  .notifications-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .notification-card {
+    padding: var(--kmt-spacing-md);
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .notification-actions {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: var(--kmt-spacing-sm);
+  }
+  
+  .notification-icon {
+    align-self: flex-start;
+  }
+}

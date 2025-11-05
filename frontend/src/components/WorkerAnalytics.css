@@ -1,0 +1,386 @@
+/* Worker Analytics Styles */
+.worker-analytics {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.analytics-header {
+  text-align: center;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+}
+
+.analytics-header h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.analytics-header p {
+  opacity: 0.9;
+  margin: 5px 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.analytics-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.analytics-card h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 10px;
+}
+
+/* Overview Card */
+.overview .overview-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-number.available {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Skills Card */
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.skill-item {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.skill-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.skill-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.skill-bar {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.skill-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.skill-rating {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Experience Card */
+.experience-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.experience-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.experience-label {
+  min-width: 150px;
+  font-weight: 500;
+  color: #333;
+}
+
+.bar-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-fill {
+  height: 12px;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  min-width: 20px;
+}
+
+.bar-count {
+  font-weight: 600;
+  color: #333;
+  min-width: 30px;
+}
+
+/* Age Groups Card */
+.age-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+}
+
+.age-item {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+}
+
+.age-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.age-label {
+  font-weight: 600;
+  color: #333;
+  margin: 5px 0;
+}
+
+.age-percentage {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Availability Card */
+.availability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.availability-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.time-slot {
+  min-width: 180px;
+  font-weight: 500;
+  color: #333;
+}
+
+.availability-bar {
+  flex: 1;
+  height: 10px;
+  background: #e9ecef;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.availability-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #17a2b8, #6f42c1);
+  transition: width 0.3s ease;
+}
+
+.availability-count {
+  min-width: 100px;
+  font-weight: 600;
+  color: #333;
+  text-align: right;
+}
+
+/* Suggestions Card */
+.suggestions {
+  grid-column: 1 / -1;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid;
+}
+
+.suggestion-item.success {
+  background: #d4edda;
+  border-left-color: #28a745;
+}
+
+.suggestion-item.warning {
+  background: #fff3cd;
+  border-left-color: #ffc107;
+}
+
+.suggestion-item.info {
+  background: #d1ecf1;
+  border-left-color: #17a2b8;
+}
+
+.suggestion-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.suggestion-content h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.suggestion-content p {
+  margin: 3px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.analytics-footer {
+  margin-top: 30px;
+}
+
+.privacy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+}
+
+.privacy-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.privacy-note p {
+  margin: 3px 0;
+  color: #666;
+}
+
+.privacy-note strong {
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .worker-analytics {
+    padding: 15px;
+  }
+  
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .analytics-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .overview-stats {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  
+  .experience-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .experience-label {
+    min-width: unset;
+  }
+  
+  .availability-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .time-slot {
+    min-width: unset;
+  }
+  
+  .availability-count {
+    min-width: unset;
+    text-align: left;
+  }
+}

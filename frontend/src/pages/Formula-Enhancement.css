@@ -1,0 +1,167 @@
+/* Formula Car Background Enhancement */
+.dashboard-content {
+  position: relative;
+}
+
+/* Add Formula Car Image */
+.dashboard-content::after {
+  content: '';
+  position: fixed;
+  bottom: -50px;
+  left: -100px;
+  width: 500px;
+  height: 300px;
+  background: url('https://www.kmt.kw/wp-content/uploads/2023/03/Formula-4-scaled.jpg') no-repeat center;
+  background-size: contain;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: -1;
+  transform: rotate(-15deg);
+}
+
+/* Racing Checkered Flag Pattern */
+.auth-container::before {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.97)),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><rect width="10" height="10" fill="%23f0f0f0"/><rect x="10" y="10" width="10" height="10" fill="%23f0f0f0"/></svg>'),
+    url('https://www.kmt.kw/wp-content/uploads/2023/03/Formula-4-scaled.jpg');
+}
+
+/* KMT Logo Enhancement */
+.dashboard-header h1::before {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background: url('https://www.kmt.kw/wp-content/uploads/2023/03/KMT-Logo-Web.png') no-repeat center;
+  background-size: contain;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+/* Racing Stripes for Cards */
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    var(--kmt-secondary) 0%,
+    var(--kmt-yellow) 50%,
+    var(--kmt-secondary) 100%
+  );
+  border-radius: 0 var(--kmt-radius-lg) var(--kmt-radius-lg) 0;
+}
+
+/* Formula Racing Theme */
+.profile-card::after {
+  content: '🏎️';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 2rem;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* Speed Lines Animation */
+@keyframes speedLines {
+  0% { transform: translateX(-100px); opacity: 0; }
+  50% { opacity: 0.3; }
+  100% { transform: translateX(100px); opacity: 0; }
+}
+
+.event-card:hover::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--kmt-secondary), transparent);
+  animation: speedLines 1s ease-out;
+}
+
+/* قسم ملخص المارشال */
+.marshals-summary-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 16px;
+  border: 2px solid #e31e24;
+  box-shadow: 0 8px 25px rgba(227, 30, 36, 0.1);
+}
+
+.marshals-summary-section h2 {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.marshals-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.summary-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.summary-card.total {
+  border-color: #1a5490;
+}
+
+.summary-card.available {
+  border-color: #28a745;
+}
+
+.summary-card.active {
+  border-color: #e31e24;
+}
+
+.summary-card.new {
+  border-color: #ffdd00;
+}
+
+.summary-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.summary-content h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0.5rem 0;
+}
+
+.summary-content p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0.25rem 0;
+}
+
+.summary-content span {
+  font-size: 0.875rem;
+  color: #666;
+  font-style: italic;
+}

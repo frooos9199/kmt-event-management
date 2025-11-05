@@ -1,0 +1,516 @@
+/* KMT Auth Design - تصميم تسجيل الدخول لمدينة الكويت لرياضة المحركات */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* KMT Official Colors */
+  --kmt-primary: #1a1a1a;
+  --kmt-secondary: #ff0000;
+  --kmt-accent: #ffd700;
+  --kmt-white: #ffffff;
+  --kmt-gray-light: #f5f5f5;
+  --kmt-gray-medium: #cccccc;
+  --kmt-gray-dark: #333333;
+  --kmt-black: #000000;
+  
+  /* KMT Gradients */
+  --kmt-gradient-primary: linear-gradient(135deg, var(--kmt-primary) 0%, var(--kmt-gray-dark) 100%);
+  --kmt-gradient-secondary: linear-gradient(45deg, var(--kmt-secondary) 0%, #cc0000 100%);
+  --kmt-gradient-accent: linear-gradient(90deg, var(--kmt-accent) 0%, #ffed4e 100%);
+  
+  /* KMT Typography */
+  --kmt-font-primary: 'Inter', 'Arial', 'Tahoma', sans-serif;
+  
+  /* KMT Spacing */
+  --kmt-spacing-xs: 0.5rem;
+  --kmt-spacing-sm: 1rem;
+  --kmt-spacing-md: 1.5rem;
+  --kmt-spacing-lg: 2rem;
+  --kmt-spacing-xl: 3rem;
+  
+  /* KMT Border Radius */
+  --kmt-radius-sm: 8px;
+  --kmt-radius-md: 12px;
+  --kmt-radius-lg: 16px;
+  --kmt-radius-xl: 24px;
+  
+  /* KMT Shadows */
+  --kmt-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --kmt-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --kmt-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --kmt-shadow-red: 0 4px 20px rgba(255, 0, 0, 0.3);
+  --kmt-shadow-gold: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--kmt-font-primary);
+  background: var(--kmt-gradient-primary);
+  color: var(--kmt-white);
+  min-height: 100vh;
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--kmt-spacing-lg);
+  position: relative;
+  background: var(--kmt-gradient-primary);
+}
+
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23333" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.auth-wrapper {
+  background: var(--kmt-white);
+  border-radius: var(--kmt-radius-lg);
+  box-shadow: var(--kmt-shadow-lg);
+  overflow: hidden;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-header {
+  background: var(--kmt-gradient-primary);
+  color: var(--kmt-white);
+  padding: var(--kmt-spacing-lg);
+  text-align: center;
+  position: relative;
+}
+
+.auth-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--kmt-gradient-accent);
+}
+
+.auth-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: var(--kmt-spacing-xs);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+.auth-header .subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+}
+
+.auth-content {
+  padding: var(--kmt-spacing-lg);
+  background: var(--kmt-white);
+  color: var(--kmt-black);
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: var(--kmt-spacing-lg);
+  background: var(--kmt-gray-light);
+  border-radius: var(--kmt-radius-md);
+  padding: 0.25rem;
+}
+
+.auth-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: var(--kmt-spacing-sm);
+  border-radius: var(--kmt-radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  color: var(--kmt-gray-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-tab.active {
+  background: var(--kmt-gradient-primary);
+  color: var(--kmt-white);
+  box-shadow: var(--kmt-shadow-sm);
+}
+
+.form-group {
+  margin-bottom: var(--kmt-spacing-md);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--kmt-spacing-xs);
+  font-weight: 600;
+  color: var(--kmt-primary);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--kmt-spacing-sm);
+  border: 2px solid var(--kmt-gray-medium);
+  border-radius: var(--kmt-radius-sm);
+  font-size: 1rem;
+  font-family: var(--kmt-font-primary);
+  transition: all 0.3s ease;
+  background: var(--kmt-white);
+  color: var(--kmt-black);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--kmt-secondary);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+  color: var(--kmt-gray-medium);
+  font-style: italic;
+}
+
+.user-type-selector {
+  display: flex;
+  gap: var(--kmt-spacing-sm);
+  margin-bottom: var(--kmt-spacing-md);
+}
+
+.user-type-btn {
+  flex: 1;
+  padding: var(--kmt-spacing-sm);
+  border: 2px solid var(--kmt-gray-medium);
+  border-radius: var(--kmt-radius-sm);
+  background: var(--kmt-white);
+  color: var(--kmt-gray-dark);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-type-btn.active {
+  border-color: var(--kmt-secondary);
+  background: var(--kmt-gradient-secondary);
+  color: var(--kmt-white);
+  box-shadow: var(--kmt-shadow-red);
+}
+
+.auth-btn {
+  width: 100%;
+  background: var(--kmt-gradient-secondary);
+  color: var(--kmt-white);
+  border: none;
+  padding: var(--kmt-spacing-sm);
+  border-radius: var(--kmt-radius-md);
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: var(--kmt-spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--kmt-shadow-red);
+}
+
+.auth-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.auth-btn:hover::before {
+  left: 100%;
+}
+
+.auth-btn:hover {
+  background: linear-gradient(45deg, #cc0000 0%, var(--kmt-secondary) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
+}
+
+.auth-btn:disabled {
+  background: var(--kmt-gray-medium);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.auth-btn:disabled:hover {
+  background: var(--kmt-gray-medium);
+  transform: none;
+  box-shadow: none;
+}
+
+.auth-btn:disabled::before {
+  display: none;
+}
+
+.demo-btn {
+  width: 100%;
+  background: var(--kmt-gradient-primary);
+  color: var(--kmt-white);
+  border: none;
+  padding: var(--kmt-spacing-sm);
+  border-radius: var(--kmt-radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--kmt-shadow-md);
+}
+
+.demo-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.demo-btn:hover::before {
+  left: 100%;
+}
+
+.demo-btn:hover {
+  background: linear-gradient(45deg, var(--kmt-gray-dark) 0%, var(--kmt-primary) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--kmt-shadow-lg);
+}
+
+.auth-message {
+  padding: var(--kmt-spacing-sm);
+  border-radius: var(--kmt-radius-sm);
+  margin-bottom: var(--kmt-spacing-md);
+  font-weight: 500;
+  text-align: center;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.auth-message.success {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  color: var(--kmt-white);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.auth-message.error {
+  background: linear-gradient(45deg, var(--kmt-secondary), #cc0000);
+  color: var(--kmt-white);
+  box-shadow: var(--kmt-shadow-red);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--kmt-white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: var(--kmt-spacing-xs);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.test-users-section {
+  margin-top: var(--kmt-spacing-lg);
+  padding-top: var(--kmt-spacing-lg);
+  border-top: 2px solid var(--kmt-gray-light);
+}
+
+.test-users-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--kmt-primary);
+  margin-bottom: var(--kmt-spacing-md);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.test-user-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--kmt-spacing-sm);
+}
+
+.test-user-card {
+  background: var(--kmt-gray-light);
+  border: 2px solid var(--kmt-gray-medium);
+  border-radius: var(--kmt-radius-md);
+  padding: var(--kmt-spacing-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.test-user-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transition: left 0.6s;
+}
+
+.test-user-card:hover::before {
+  left: 100%;
+}
+
+.test-user-card:hover {
+  border-color: var(--kmt-secondary);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--kmt-shadow-md);
+}
+
+.test-user-card.manager {
+  border-color: var(--kmt-accent);
+}
+
+.test-user-card.manager:hover {
+  border-color: var(--kmt-accent);
+  box-shadow: var(--kmt-shadow-gold);
+}
+
+.test-user-role {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: var(--kmt-spacing-xs);
+  color: var(--kmt-primary);
+}
+
+.test-user-email {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--kmt-gray-dark);
+  margin-bottom: 0.25rem;
+}
+
+.test-user-password {
+  font-size: 0.8rem;
+  color: var(--kmt-gray-dark);
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: var(--kmt-spacing-sm);
+  }
+  
+  .auth-wrapper {
+    max-width: 100%;
+  }
+  
+  .auth-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .test-user-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-type-selector {
+    flex-direction: column;
+  }
+  
+  .auth-header {
+    padding: var(--kmt-spacing-md);
+  }
+  
+  .auth-content {
+    padding: var(--kmt-spacing-md);
+  }
+  
+  .auth-header h1 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Animation for form appearance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-wrapper {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Focus styles for accessibility */
+.auth-btn:focus,
+.demo-btn:focus,
+.user-type-btn:focus,
+.test-user-card:focus {
+  outline: 3px solid var(--kmt-accent);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --kmt-primary: #000000;
+    --kmt-secondary: #ff0000;
+    --kmt-gray-medium: #808080;
+    --kmt-gray-dark: #404040;
+  }
+}
