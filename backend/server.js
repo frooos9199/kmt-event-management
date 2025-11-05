@@ -7,7 +7,12 @@ const PORT = process.env.PORT || 3000;
 
 // CORS
 app.use(cors({
-  origin: ['https://kmt-event-management.netlify.app', 'http://localhost:3000'],
+  origin: [
+    'https://kmt-event-management.vercel.app',
+    'https://kmt-event-management.netlify.app', 
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ],
   credentials: true
 }));
 
