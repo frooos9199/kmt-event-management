@@ -273,6 +273,8 @@ app.put('/api/users/profile', auth, async (req, res) => {
       ...currentMarshal,
       // تحديث الاسم إذا تم إرساله
       ...(req.body.fullName && { fullName: req.body.fullName }),
+      // تحديث الهاتف إذا تم إرساله
+      ...(req.body.phone && { phone: req.body.phone }),
       marshallInfo: {
         ...currentMarshal.marshallInfo,
         ...marshallInfo

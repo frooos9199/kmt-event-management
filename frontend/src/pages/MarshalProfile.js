@@ -5,6 +5,8 @@ const MarshalProfile = ({ onPageChange }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
     profileImage: '',
     dateOfBirth: '',
     nationality: '',
@@ -90,6 +92,8 @@ const MarshalProfile = ({ onPageChange }) => {
         // تحديث النموذج بالبيانات المحفوظة
         if (userInfo.marshallInfo) {
           setFormData({
+            fullName: userInfo.fullName || '',
+            phone: userInfo.phone || '',
             profileImage: userInfo.marshallInfo.profileImage || '',
             dateOfBirth: userInfo.marshallInfo.dateOfBirth || '',
             nationality: userInfo.marshallInfo.nationality || '',
@@ -173,14 +177,17 @@ const MarshalProfile = ({ onPageChange }) => {
       
       const updateData = {
         fullName: formData.fullName,
+        phone: formData.phone,
         marshallInfo: {
           dateOfBirth: formData.dateOfBirth,
           nationality: formData.nationality,
           nationalId: formData.nationalId,
           profileImage: formData.profileImage,
-          specializations: formData.specializations,
-          emergencyContact: formData.emergencyContact,
-          experienceLevel: formData.experienceLevel
+          trackSpecializations: formData.trackSpecializations,
+          medicalInfo: formData.medicalInfo,
+          experienceLevel: formData.experienceLevel,
+          certifications: formData.certifications,
+          languages: formData.languages
         }
       };
       
@@ -245,6 +252,31 @@ const MarshalProfile = ({ onPageChange }) => {
           {/* المعلومات الأساسية */}
           <div className="form-section">
             <h2>📋 المعلومات الأساسية</h2>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>👤 الاسم الكامل</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  placeholder="الاسم الكامل"
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label>📱 رقم الهاتف</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="+965xxxxxxxx"
+                  className="form-input"
+                />
+              </div>
+            </div>
             
             <div className="form-row">
               <div className="form-group">
