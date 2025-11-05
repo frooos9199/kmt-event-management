@@ -1,0 +1,24 @@
+{
+  "services": [
+    {
+      "type": "web",
+      "name": "kmt-backend",
+      "runtime": "node",
+      "plan": "free",
+      "rootDir": "./backend",
+      "buildCommand": "npm install",
+      "startCommand": "npm start",
+      "healthCheckPath": "/",
+      "envVars": [
+        {
+          "key": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "key": "CLIENT_URL",
+          "value": "https://kmt-event-management.netlify.app"
+        }
+      ]
+    }
+  ]
+}
