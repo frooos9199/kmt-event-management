@@ -49,7 +49,7 @@ const Auth = ({ onPageChange }) => {
         ? { marshalNumber: formData.marshalNumber, password: formData.password }
         : { email: formData.email, password: formData.password };
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
