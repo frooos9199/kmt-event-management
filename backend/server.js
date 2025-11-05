@@ -100,10 +100,10 @@ const mockRaces = [
 
 // Auth endpoints
 app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, marshalNumber } = req.body;
   
-  // Mock authentication
-  if (email === 'admin@kmt.com' && password === 'admin123') {
+  // إذا كان تسجيل دخول بالبريد الإلكتروني (للمدير)
+  if (email && email === 'admin@kmt.com' && password === 'admin123') {
     return res.json({
       success: true,
       token: 'mock-admin-token',
@@ -111,13 +111,35 @@ app.post('/api/auth/login', (req, res) => {
     });
   }
   
-  const marshal = mockMarshals.find(m => m.email === email);
-  if (marshal && password === '123456') {
-    return res.json({
-      success: true,
-      token: 'mock-marshal-token',
-      user: { ...marshal, userType: 'marshall' }
-    });
+  // إذا كان تسجيل دخول برقم المارشال
+  if (marshalNumber) {
+    // البحث برقم المارشال الكامل (KMT-XXX) أو الرقم فقط
+    const searchNumber = marshalNumber.startsWith('KMT-') ? marshalNumber : `KMT-${marshalNumber}`;
+    const marshal = mockMarshals.find(m => m.id === searchNumber || m.marshalNumber === marshalNumber);
+    
+    if (marshal && marshal.password === password) {
+      // تحديث آخر دخول
+      marshal.lastLogin = new Date().toISOString();
+      
+      return res.json({
+        success: true,
+        token: 'mock-marshal-token',
+        user: { ...marshal, userType: 'marshall' }
+      });
+    }
+  }
+  
+  // محاولة البحث بالبريد الإلكتروني (للتوافق مع النظام القديم)
+  if (email) {
+    const marshal = mockMarshals.find(m => m.email === email);
+    if (marshal && marshal.password === password) {
+      marshal.lastLogin = new Date().toISOString();
+      return res.json({
+        success: true,
+        token: 'mock-marshal-token',
+        user: { ...marshal, userType: 'marshall' }
+      });
+    }
   }
   
   res.status(401).json({ message: 'بيانات دخول غير صحيحة' });
