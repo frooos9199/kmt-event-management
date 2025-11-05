@@ -61,15 +61,27 @@ const MarshalProfile = ({ onPageChange }) => {
       const token = localStorage.getItem('token');
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
       
+      console.log('Loading profile from server...');
+      
+      if (!token) {
+        console.log('No token found, redirecting to auth');
+        onPageChange('auth');
+        return;
+      }
+      
       const response = await fetch(`${API_URL}/api/users/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
+      console.log('Profile fetch response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
         const userInfo = data.user;
+        
+        console.log('Profile loaded successfully:', userInfo);
         
         // تحديث البيانات المحلية
         localStorage.setItem('userData', JSON.stringify(userInfo));
@@ -90,6 +102,14 @@ const MarshalProfile = ({ onPageChange }) => {
             certifications: userInfo.marshallInfo.certifications || [],
             languages: userInfo.marshallInfo.languages || []
           });
+        }
+      } else {
+        console.error('Failed to fetch profile:', response.status);
+        if (response.status === 401) {
+          console.log('Token expired, redirecting to auth');
+          localStorage.removeItem('token');
+          localStorage.removeItem('userData');
+          onPageChange('auth');
         }
       }
     } catch (error) {
@@ -140,7 +160,17 @@ const MarshalProfile = ({ onPageChange }) => {
 
     try {
       const token = localStorage.getItem('token');
+      console.log('Token check:', token ? 'موجود' : 'غير موجود');
+      
+      if (!token) {
+        alert('لم يتم العثور على رمز المصادقة. يرجى تسجيل الدخول مرة أخرى.');
+        onPageChange('auth');
+        return;
+      }
+
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      console.log('Sending profile update to:', `${API_URL}/api/users/profile`);
+      
       const response = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {
@@ -150,6 +180,8 @@ const MarshalProfile = ({ onPageChange }) => {
         body: JSON.stringify({ marshallInfo: formData })
       });
 
+      console.log('Response status:', response.status);
+
       if (response.ok) {
         const updatedUser = await response.json();
         localStorage.setItem('userData', JSON.stringify(updatedUser.user));
@@ -157,7 +189,16 @@ const MarshalProfile = ({ onPageChange }) => {
         onPageChange('worker-dashboard');
       } else {
         const error = await response.json();
-        alert(error.message || 'حدث خطأ أثناء الحفظ');
+        console.error('Server error:', error);
+        
+        if (response.status === 401) {
+          alert('انتهت صلاحية جلسة العمل. يرجى تسجيل الدخول مرة أخرى.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('userData');
+          onPageChange('auth');
+        } else {
+          alert(error.message || 'حدث خطأ أثناء الحفظ');
+        }
       }
     } catch (error) {
       console.error('خطأ:', error);

@@ -211,7 +211,10 @@ app.put('/api/users/profile', auth, async (req, res) => {
     const { marshallInfo } = req.body;
     const userId = req.user._id || req.user.userId || req.user.id;
 
-    console.log('Profile update request:', { userId, marshallInfo });
+    console.log('Profile update request received');
+    console.log('User ID from token:', userId);
+    console.log('User object from token:', req.user);
+    console.log('Marshall info to update:', JSON.stringify(marshallInfo, null, 2));
 
     // البحث عن المارشال باستخدام معرف المستخدم
     let marshalIndex = -1;
@@ -219,8 +222,10 @@ app.put('/api/users/profile', auth, async (req, res) => {
     // البحث بطرق مختلفة للعثور على المارشال
     if (typeof userId === 'string' && userId.startsWith('KMT-')) {
       marshalIndex = mockMarshals.findIndex(m => m.id === userId);
+      console.log('Searching by KMT ID:', userId);
     } else if (req.user.marshalNumber) {
       marshalIndex = mockMarshals.findIndex(m => m.marshalNumber === req.user.marshalNumber);
+      console.log('Searching by marshal number:', req.user.marshalNumber);
     } else {
       // البحث في حقول أخرى
       marshalIndex = mockMarshals.findIndex(m => 
@@ -228,18 +233,25 @@ app.put('/api/users/profile', auth, async (req, res) => {
         m.marshalNumber === userId || 
         m.email === req.user.email
       );
+      console.log('Searching by various fields');
     }
 
+    console.log('Marshal index found:', marshalIndex);
+
     if (marshalIndex === -1) {
-      console.log('Marshal not found. Available marshals:', mockMarshals.map(m => ({ id: m.id, marshalNumber: m.marshalNumber })));
+      console.log('Marshal not found. Available marshals:');
+      mockMarshals.forEach((m, i) => {
+        console.log(`${i}: { id: ${m.id}, marshalNumber: ${m.marshalNumber}, email: ${m.email} }`);
+      });
       return res.status(404).json({ message: 'المارشال غير موجود' });
     }
 
     // دمج البيانات الجديدة مع البيانات الموجودة
+    const currentMarshal = mockMarshals[marshalIndex];
     const updatedMarshal = {
-      ...mockMarshals[marshalIndex],
+      ...currentMarshal,
       marshallInfo: {
-        ...mockMarshals[marshalIndex].marshallInfo,
+        ...currentMarshal.marshallInfo,
         ...marshallInfo
       },
       updatedAt: new Date().toISOString()
@@ -259,7 +271,7 @@ app.put('/api/users/profile', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating profile:', error);
-    res.status(500).json({ message: 'خطأ في الخادم' });
+    res.status(500).json({ message: 'خطأ في الخادم: ' + error.message });
   }
 });
 
