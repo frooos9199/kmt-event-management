@@ -36,7 +36,8 @@ const ManagerDashboard = ({ onPageChange }) => {
     try {
       setStatsLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/stats/dashboard', {
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
+      const response = await fetch(`${API_URL}/api/stats/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -85,15 +86,15 @@ const ManagerDashboard = ({ onPageChange }) => {
 
   const fetchRecentMarshals = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/users/marshals', {
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
+      const response = await fetch(`${API_URL}/api/users/marshals`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
-      });
-
-      if (response.ok) {
+      });      if (response.ok) {
         const data = await response.json();
         // أخذ آخر 3 مارشال فقط للعرض السريع
         setRecentMarshals(data.slice(0, 3));

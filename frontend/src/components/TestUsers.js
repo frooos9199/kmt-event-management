@@ -12,7 +12,7 @@ const TestUsers = ({ onUserCreated, onLogin }) => {
 
     try {
       // إنشاء المدير
-      const managerResponse = await fetch('http://localhost:5001/api/auth/register', {
+      const managerResponse = await fetch('https://kmt-event-management.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ const TestUsers = ({ onUserCreated, onLogin }) => {
       });
 
         // إنشاء المارشال
-        const marshallResponse = await fetch('http://localhost:5001/api/auth/register', {
+        const marshallResponse = await fetch('https://kmt-event-management.onrender.com/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

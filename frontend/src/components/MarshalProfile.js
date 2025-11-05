@@ -82,7 +82,7 @@ const MarshalProfile = ({ onPageChange, onProfileUpdate }) => {
         updateData.marshallInfo.nationalId = formData.nationalId;
       }
 
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
       const response = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {

@@ -19,7 +19,7 @@ const WorkerDashboard = ({ onPageChange }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+          const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
           const response = await fetch(`${API_URL}/api/users/profile`, {
             method: 'GET',
             headers: {
@@ -140,7 +140,7 @@ const WorkerDashboard = ({ onPageChange }) => {
           try {
             // إرسال الصورة للخادم مع الحفاظ على جميع البيانات الموجودة
             const token = localStorage.getItem('token');
-            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+            const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
             const response = await fetch(`${API_URL}/api/users/profile`, {
               method: 'PUT',
               headers: {

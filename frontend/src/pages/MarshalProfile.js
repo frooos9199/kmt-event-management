@@ -61,7 +61,7 @@ const MarshalProfile = ({ onPageChange }) => {
   const loadProfileFromServer = async () => {
     try {
       const token = localStorage.getItem('token');
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
       
       console.log('Loading profile from server...');
       
@@ -172,7 +172,7 @@ const MarshalProfile = ({ onPageChange }) => {
         return;
       }
 
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
       console.log('Sending profile update to:', `${API_URL}/api/users/profile`);
       
       const updateData = {

@@ -16,7 +16,7 @@ const MarshalsManagement = ({ onPageChange }) => {
   const fetchMarshals = async () => {
     try {
       const token = localStorage.getItem('token');
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
       const response = await fetch(`${API_URL}/api/users/marshals`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -38,7 +38,7 @@ const MarshalsManagement = ({ onPageChange }) => {
     setBulkCreateLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
       const response = await fetch(`${API_URL}/api/users/create-bulk-marshals`, {
         method: 'POST',
         headers: {

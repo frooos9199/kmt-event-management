@@ -17,7 +17,7 @@ const RacesManagement = ({ onPageChange }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
-      const response = await fetch('http://localhost:5001/api/auth/verify', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/auth/verify', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -33,7 +33,7 @@ const RacesManagement = ({ onPageChange }) => {
   const fetchRaces = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/races', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/races', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -53,7 +53,7 @@ const RacesManagement = ({ onPageChange }) => {
   const fetchRaceApplications = async (raceId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/applications/race/${raceId}`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/applications/race/${raceId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -71,7 +71,7 @@ const RacesManagement = ({ onPageChange }) => {
   const updateRaceStatus = async (raceId, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/races/${raceId}/status`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/races/${raceId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const RacesManagement = ({ onPageChange }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/races/${raceId}`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/races/${raceId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

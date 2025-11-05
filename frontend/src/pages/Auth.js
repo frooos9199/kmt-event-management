@@ -48,7 +48,7 @@ const Auth = ({ onPageChange }) => {
         ? { email: username, password }
         : { marshalNumber: username, password };
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/auth/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com'}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

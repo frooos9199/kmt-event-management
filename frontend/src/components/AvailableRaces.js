@@ -16,7 +16,7 @@ const AvailableRaces = ({ onPageChange }) => {
   const fetchAvailableRaces = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/races', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/races', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -50,7 +50,7 @@ const AvailableRaces = ({ onPageChange }) => {
   const fetchUserApplications = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/applications/my-applications', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/applications/my-applications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -69,7 +69,7 @@ const AvailableRaces = ({ onPageChange }) => {
   const applyForRace = async (raceId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/applications', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/applications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -14,7 +14,7 @@ const Notifications = ({ onPageChange }) => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/notifications', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -34,7 +34,7 @@ const Notifications = ({ onPageChange }) => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/notifications/stats', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/notifications/stats', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -52,7 +52,7 @@ const Notifications = ({ onPageChange }) => {
   const markAsRead = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -77,7 +77,7 @@ const Notifications = ({ onPageChange }) => {
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/notifications/mark-all-read', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/notifications/mark-all-read', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -98,7 +98,7 @@ const Notifications = ({ onPageChange }) => {
   const deleteNotification = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/notifications/${notificationId}`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -1,5 +1,35 @@
 {
-  "marshals": [],
+  "marshals": [
+    {
+      "id": "KMT-150",
+      "marshalNumber": "150",
+      "createdAt": "2025-11-05T18:02:35.394Z",
+      "status": "active",
+      "hasChangedPassword": false,
+      "lastLogin": "2025-11-05T18:02:48.830Z",
+      "marshallInfo": {},
+      "fullName": "مارشال رقم 100",
+      "email": "marshal100@kmt.com",
+      "phone": "+96599000100",
+      "nationality": "الكويت",
+      "password": "123456"
+    },
+    {
+      "id": "KMT-151",
+      "marshalNumber": "151",
+      "createdAt": "2025-11-05T18:02:35.395Z",
+      "status": "pending",
+      "hasChangedPassword": false,
+      "lastLogin": null,
+      "marshallInfo": {},
+      "fullName": "مارشال رقم 101",
+      "email": "marshal101@kmt.com",
+      "phone": "+96599000101",
+      "nationality": "الكويت",
+      "password": "123456"
+    }
+  ],
   "races": [],
-  "users": []
+  "users": [],
+  "lastMarshalNumber": 151
 }

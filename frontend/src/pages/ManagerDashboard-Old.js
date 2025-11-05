@@ -34,7 +34,7 @@ const ManagerDashboard = ({ onPageChange }) => {
   const fetchRecentMarshals = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/users/marshals', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/users/marshals', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

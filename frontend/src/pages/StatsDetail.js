@@ -20,7 +20,7 @@ const StatsDetail = ({ onPageChange, statsType }) => {
       
       if (statsType?.type === 'marshalls' || statsType?.type === 'available-marshalls') {
         // جلب بيانات المارشال
-        const response = await fetch('http://localhost:5001/api/users/marshals', {
+        const response = await fetch('https://kmt-event-management.onrender.com/api/users/marshals', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ const StatsDetail = ({ onPageChange, statsType }) => {
       }
 
       // جلب الإحصائيات العامة
-      const statsResponse = await fetch('http://localhost:5001/api/stats/dashboard', {
+      const statsResponse = await fetch('https://kmt-event-management.onrender.com/api/stats/dashboard', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

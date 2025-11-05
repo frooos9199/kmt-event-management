@@ -121,7 +121,7 @@ const CreateRace = ({ onPageChange }) => {
 
       console.log('إرسال البيانات:', submitData);
 
-      const response = await fetch('http://localhost:5001/api/races', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/races', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

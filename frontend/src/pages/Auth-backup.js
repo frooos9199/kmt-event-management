@@ -49,7 +49,7 @@ const Auth = ({ onPageChange }) => {
         ? { email: formData.email, password: formData.password }
         : { ...formData, userType };
 
-      const response = await fetch(`http://localhost:5001${endpoint}`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

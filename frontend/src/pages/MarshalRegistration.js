@@ -49,7 +49,7 @@ const MarshalRegistration = ({ onPageChange }) => {
         userType: 'marshall'
       };
 
-      const response = await fetch('http://localhost:5001/api/auth/register', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const MarshalRegistration = ({ onPageChange }) => {
         // تحديث البيانات في الخادم
         setTimeout(async () => {
           try {
-            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+            const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
             await fetch(`${API_URL}/api/users/profile`, {
               method: 'PUT',
               headers: {

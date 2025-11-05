@@ -23,7 +23,7 @@ const ApplicationsManagement = ({ onPageChange }) => {
       if (filter !== 'all') queryParams.append('status', filter);
       if (selectedRace) queryParams.append('raceId', selectedRace);
       
-      const response = await fetch(`http://localhost:5001/api/applications?${queryParams}`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/applications?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -46,7 +46,7 @@ const ApplicationsManagement = ({ onPageChange }) => {
   const fetchRaces = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/races', {
+      const response = await fetch('https://kmt-event-management.onrender.com/api/races', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -65,7 +65,7 @@ const ApplicationsManagement = ({ onPageChange }) => {
   const respondToApplication = async (applicationId, status, managerNotes = '', assignedPosition = '') => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/applications/${applicationId}/respond`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/applications/${applicationId}/respond`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

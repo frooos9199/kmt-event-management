@@ -485,7 +485,7 @@ const MarshalManagement = ({ onPageChange }) => {
               <div className="marshal-image-container">
                 {marshal.profileImage ? (
                   <img 
-                    src={`http://localhost:5001/uploads/marshals/${marshal.profileImage}`}
+                    src={`https://kmt-event-management.onrender.com/uploads/marshals/${marshal.profileImage}`}
                     alt={marshal.name || 'صورة المارشال'}
                     className="marshal-image"
                     onError={(e) => {
