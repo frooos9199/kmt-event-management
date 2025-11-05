@@ -7,10 +7,11 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && nodemon server.js",
     "client": "cd frontend && npm start",
-    "build": "cd frontend && npm run build",
+    "build": "cd frontend && npm install && npm run build",
     "start": "cd backend && node server.js",
     "install-all": "npm install && cd frontend && npm install",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-build": "cd frontend && npm install && npm run build"
   },
   "keywords": [
     "events",
