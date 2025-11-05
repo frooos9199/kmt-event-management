@@ -145,6 +145,55 @@ app.post('/api/auth/login', (req, res) => {
   res.status(401).json({ message: 'بيانات دخول غير صحيحة' });
 });
 
+// إنشاء المارشال بالجملة
+app.post('/api/users/create-bulk-marshals', (req, res) => {
+  const { count } = req.body;
+  
+  // التحقق من البيانات
+  if (!count || count < 1 || count > 100) {
+    return res.status(400).json({ 
+      message: 'عدد المارشال يجب أن يكون بين 1 و 100' 
+    });
+  }
+
+  // العثور على آخر رقم مارشال موجود
+  const existingNumbers = mockMarshals.map(m => parseInt(m.marshalNumber)).filter(n => !isNaN(n));
+  const lastNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 99;
+  
+  const newMarshals = [];
+  const startId = lastNumber + 1;
+  const endId = startId + count - 1;
+  
+  for (let i = 0; i < count; i++) {
+    const marshalNumber = startId + i;
+    
+    const newMarshal = {
+      id: `KMT-${marshalNumber}`,
+      marshalNumber: marshalNumber.toString(),
+      fullName: `مارشال رقم ${marshalNumber}`,
+      email: `marshal${marshalNumber}@kmt.com`,
+      phone: `+965${99000000 + marshalNumber}`,
+      nationality: 'الكويت',
+      status: 'pending',
+      password: '123456', // كلمة مرور موحدة
+      hasChangedPassword: false,
+      createdAt: new Date().toISOString(),
+      lastLogin: null
+    };
+    
+    newMarshals.push(newMarshal);
+    mockMarshals.push(newMarshal);
+  }
+  
+  res.json({
+    message: `تم إنشاء ${count} مارشال بنجاح`,
+    created: count,
+    startId: startId,
+    endId: endId,
+    marshals: newMarshals
+  });
+});
+
 // Marshals endpoints
 app.get('/api/users/marshals', (req, res) => {
   res.json({ marshals: mockMarshals });

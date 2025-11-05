@@ -5,6 +5,9 @@ const MarshalsManagement = ({ onPageChange }) => {
   const [marshals, setMarshals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMarshal, setSelectedMarshal] = useState(null);
+  const [showBulkCreateModal, setShowBulkCreateModal] = useState(false);
+  const [bulkCreateCount, setBulkCreateCount] = useState(20);
+  const [bulkCreateLoading, setBulkCreateLoading] = useState(false);
 
   useEffect(() => {
     fetchMarshals();
@@ -13,7 +16,8 @@ const MarshalsManagement = ({ onPageChange }) => {
   const fetchMarshals = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/users/marshals', {
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const response = await fetch(`${API_URL}/api/users/marshals`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -27,6 +31,37 @@ const MarshalsManagement = ({ onPageChange }) => {
       console.error('خطأ في جلب المارشال:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBulkCreateMarshals = async () => {
+    setBulkCreateLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const response = await fetch(`${API_URL}/api/users/create-bulk-marshals`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ count: bulkCreateCount })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`تم إنشاء ${result.created} مارشال بنجاح!\nالأرقام من: ${result.startId} إلى ${result.endId}\nكلمة المرور للجميع: 123456`);
+        fetchMarshals(); // إعادة تحميل القائمة
+        setShowBulkCreateModal(false);
+      } else {
+        const error = await response.json();
+        alert('خطأ في إنشاء المارشال: ' + error.message);
+      }
+    } catch (error) {
+      console.error('خطأ في إنشاء المارشال:', error);
+      alert('خطأ في الاتصال بالخادم');
+    } finally {
+      setBulkCreateLoading(false);
     }
   };
 
@@ -75,6 +110,13 @@ const MarshalsManagement = ({ onPageChange }) => {
           ← العودة
         </button>
         <h1 className="kmt-title">👥 إدارة المارشال</h1>
+        <button 
+          onClick={() => setShowBulkCreateModal(true)}
+          className="kmt-primary-btn"
+          style={{ marginLeft: 'auto' }}
+        >
+          ➕ إضافة مارشال بالجملة
+        </button>
       </div>
 
       <div className="kmt-container">
@@ -299,6 +341,60 @@ const MarshalsManagement = ({ onPageChange }) => {
         </div>
       </div>
 
+      {/* مودال إنشاء المارشال بالجملة */}
+      {showBulkCreateModal && (
+        <div className="modal-backdrop" onClick={() => setShowBulkCreateModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>➕ إنشاء مارشال بالجملة</h2>
+              <button 
+                onClick={() => setShowBulkCreateModal(false)}
+                className="modal-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="input-group">
+                <label htmlFor="bulkCount">عدد المارشال المطلوب إنشاؤها:</label>
+                <input
+                  id="bulkCount"
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={bulkCreateCount}
+                  onChange={(e) => setBulkCreateCount(parseInt(e.target.value) || 1)}
+                  className="form-input"
+                />
+                <small className="help-text">
+                  سيتم إنشاء {bulkCreateCount} حساب مارشال بأرقام تسلسلية
+                  <br />
+                  كلمة المرور لجميع الحسابات: <strong>123456</strong>
+                </small>
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <button 
+                onClick={() => setShowBulkCreateModal(false)}
+                className="kmt-secondary-btn"
+                disabled={bulkCreateLoading}
+              >
+                إلغاء
+              </button>
+              <button 
+                onClick={handleBulkCreateMarshals}
+                className="kmt-primary-btn"
+                disabled={bulkCreateLoading}
+              >
+                {bulkCreateLoading ? 'جاري الإنشاء...' : `إنشاء ${bulkCreateCount} مارشال`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style jsx>{`
         .marshals-management-layout {
           display: grid;
@@ -502,6 +598,135 @@ const MarshalsManagement = ({ onPageChange }) => {
           .info-grid {
             grid-template-columns: 1fr;
           }
+        }
+
+        /* مودال إنشاء المارشال بالجملة */
+        .modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 500px;
+          max-height: 90vh;
+          overflow-y: auto;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+          padding: 20px;
+          border-bottom: 1px solid #eee;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .modal-header h2 {
+          margin: 0;
+          color: var(--kmt-primary);
+          font-size: 18px;
+        }
+
+        .modal-close-btn {
+          background: none;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+          color: #999;
+          padding: 5px;
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-close-btn:hover {
+          background: #f5f5f5;
+          color: #333;
+        }
+
+        .modal-body {
+          padding: 20px;
+        }
+
+        .input-group {
+          margin-bottom: 20px;
+        }
+
+        .input-group label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: var(--kmt-primary);
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 12px;
+          border: 2px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 16px;
+          transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+          outline: none;
+          border-color: var(--kmt-primary);
+        }
+
+        .help-text {
+          display: block;
+          margin-top: 8px;
+          color: #666;
+          font-size: 14px;
+          line-height: 1.4;
+        }
+
+        .modal-footer {
+          padding: 20px;
+          border-top: 1px solid #eee;
+          display: flex;
+          justify-content: flex-end;
+          gap: 12px;
+        }
+
+        .kmt-secondary-btn {
+          padding: 12px 24px;
+          border: 2px solid var(--kmt-primary);
+          background: white;
+          color: var(--kmt-primary);
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s;
+        }
+
+        .kmt-secondary-btn:hover:not(:disabled) {
+          background: var(--kmt-primary);
+          color: white;
+        }
+
+        .kmt-secondary-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .kmt-primary-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
       `}</style>
     </div>
