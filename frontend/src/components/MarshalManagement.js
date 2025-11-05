@@ -37,26 +37,75 @@ const MarshalManagement = ({ onPageChange }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+      
+      // إضافة timeout للطلب
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 ثواني timeout
+      
       const response = await fetch('https://kmt-event-management.onrender.com/api/users/marshals', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
       if (response.ok) {
         const data = await response.json();
-        setMarshals(data);
+        // إصلاح تنسيق البيانات
+        const marshalsData = data.marshals || data || [];
+        setMarshals(marshalsData);
       } else {
         console.error('فشل في جلب المارشال:', response.status);
-        alert('فشل في جلب البيانات');
+        // استخدام بيانات وهمية في حالة الفشل
+        setMarshals(getMockMarshals());
+        alert('تم تحميل البيانات التجريبية');
       }
     } catch (error) {
       console.error('خطأ في جلب المارشال:', error);
-      alert('خطأ في جلب البيانات');
+      // استخدام بيانات وهمية في حالة الخطأ
+      setMarshals(getMockMarshals());
+      alert('تم تحميل البيانات التجريبية');
     } finally {
       setLoading(false);
     }
   };
+
+  // بيانات وهمية للاختبار
+  const getMockMarshals = () => [
+    {
+      id: 'KMT-100',
+      marshalNumber: '100',
+      fullName: 'أحمد محمد الكويتي',
+      email: 'marshal100@kmt.com',
+      phone: '+96599100100',
+      nationality: 'الكويت',
+      status: 'active',
+      experience: 'خبير'
+    },
+    {
+      id: 'KMT-101',
+      marshalNumber: '101',
+      fullName: 'فاطمة الزهراء',
+      email: 'marshal101@kmt.com',
+      phone: '+96599100101',
+      nationality: 'الكويت',
+      status: 'active',
+      experience: 'متوسط'
+    },
+    {
+      id: 'KMT-102',
+      marshalNumber: '102',
+      fullName: 'خالد العتيبي',
+      email: 'marshal102@kmt.com',
+      phone: '+96599100102',
+      nationality: 'السعودية',
+      status: 'pending',
+      experience: 'مبتدئ'
+    }
+  ];
 
   useEffect(() => {
     fetchMarshals();
@@ -68,7 +117,7 @@ const MarshalManagement = ({ onPageChange }) => {
       const formData = new FormData();
       formData.append('profileImage', imageFile);
 
-      const response = await fetch(`http://localhost:5001/api/marshals/${marshalId}/upload-image`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/marshals/${marshalId}/upload-image`, {
         method: 'POST',
         body: formData,
       });
@@ -95,8 +144,8 @@ const MarshalManagement = ({ onPageChange }) => {
 
     try {
       const url = editingMarshal 
-        ? `http://localhost:5001/api/marshals/${editingMarshal._id}`
-        : 'http://localhost:5001/api/marshals/register';
+        ? `https://kmt-event-management.onrender.com/api/marshals/${editingMarshal._id}`
+        : 'https://kmt-event-management.onrender.com/api/marshals/register';
       
       const method = editingMarshal ? 'PUT' : 'POST';
       
@@ -199,7 +248,7 @@ const MarshalManagement = ({ onPageChange }) => {
 
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5001/api/marshals/${id}`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/marshals/${id}`, {
         method: 'DELETE',
       });
 
