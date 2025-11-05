@@ -4,17 +4,33 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3000;
+
+// CORS configuration for production
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'https://kmt-event-management.netlify.app',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // تقديم الملفات الثابتة (الصور)
 app.use('/uploads', express.static('uploads'));
 
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'KMT Event Management API is running!', 
+    status: 'OK',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/eventpro';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/kmt-event-management';
 
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('✅ تم الاتصال بقاعدة البيانات بنجاح'))
