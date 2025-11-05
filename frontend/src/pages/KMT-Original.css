@@ -56,6 +56,25 @@ input, textarea, select {
   background-color: var(--kmt-white) !important;
 }
 
+/* Personal Info Summary in Dashboard */
+.personal-info-summary {
+  margin-top: var(--kmt-spacing-md);
+  padding: var(--kmt-spacing-md);
+  background: var(--kmt-gray-light);
+  border-radius: var(--kmt-radius);
+  border-right: 4px solid var(--kmt-secondary);
+}
+
+.personal-info-summary p {
+  margin-bottom: var(--kmt-spacing-xs);
+  font-size: 0.95rem;
+  color: var(--kmt-gray-dark);
+}
+
+.personal-info-summary p strong {
+  color: var(--kmt-primary);
+}
+
 /* Create Race Form Styles */
 .create-race-form {
   max-width: 800px;

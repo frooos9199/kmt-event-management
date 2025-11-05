@@ -258,6 +258,29 @@ const WorkerDashboard = ({ onPageChange }) => {
                 <p><strong>الاسم الكامل:</strong> {user.fullName}</p>
                 <p><strong>البريد الإلكتروني:</strong> {user.email}</p>
                 <p><strong>الرتبة:</strong> مارشال معتمد - KMT</p>
+                
+                {/* عرض المعلومات الشخصية المحفوظة */}
+                {user.marshallInfo && (
+                  <div className="personal-info-summary">
+                    {user.marshallInfo.dateOfBirth && (
+                      <p><strong>تاريخ الميلاد:</strong> {new Date(user.marshallInfo.dateOfBirth).toLocaleDateString('ar-EG')}</p>
+                    )}
+                    {user.marshallInfo.nationality && (
+                      <p><strong>الجنسية:</strong> {user.marshallInfo.nationality}</p>
+                    )}
+                    {user.marshallInfo.nationalId && (
+                      <p><strong>رقم الهوية:</strong> {user.marshallInfo.nationalId}</p>
+                    )}
+                    {user.marshallInfo.experienceLevel && (
+                      <p><strong>مستوى الخبرة:</strong> 
+                        {user.marshallInfo.experienceLevel === 'beginner' ? 'مبتدئ' :
+                         user.marshallInfo.experienceLevel === 'intermediate' ? 'متوسط' :
+                         user.marshallInfo.experienceLevel === 'advanced' ? 'متقدم' : user.marshallInfo.experienceLevel}
+                      </p>
+                    )}
+                  </div>
+                )}
+                
                 <p><strong>حالة الحساب:</strong> 
                   <span className={`status ${user.accountStatus?.profileStatus || 'approved'}`}>
                     {user.accountStatus?.profileStatus === 'approved' ? 'معتمد ✅' : 
