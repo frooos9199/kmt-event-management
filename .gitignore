@@ -15,6 +15,9 @@ dist/
 .env.test.local
 .env.production.local
 
+# Don't ignore production env for Vercel
+!frontend/.env.production
+
 # IDE
 .vscode/
 .idea/
