@@ -1,12 +1,16 @@
-// حل مؤقت: Backend بسيط للعرض التوضيحي
+// KMT Event Management System - Backend with Persistent Data Storage
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const auth = require('./middleware/auth');
+const dataManager = require('./utils/dataManager');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'eventpro_secret_key_2024';
+
+// تهيئة قاعدة البيانات عند بدء تشغيل الخادم
+dataManager.initDatabase();
 
 // CORS
 app.use(cors({
@@ -24,353 +28,398 @@ app.use(express.json());
 // Health check
 app.get('/', (req, res) => {
   res.json({ 
-    message: 'KMT Backend API - Demo Version',
+    message: 'KMT Backend API - Persistent Data Version',
     status: 'running',
-    time: new Date().toISOString()
+    time: new Date().toISOString(),
+    dataStatus: 'persistent storage enabled'
   });
 });
 
-// Mock data - نظام المارشال الجديد مع أرقام متسلسلة من 100
-const generateMarshals = () => {
-  const marshals = [];
-  for (let i = 0; i < 50; i++) {
-    const marshalNumber = 100 + i; // يبدأ من 100 إلى 149
-    const passwordIndex = (i % 6) + 1; // كلمات مرور من 1 إلى 6 (تتكرر)
-    
-    marshals.push({
-      id: `KMT-${marshalNumber}`,
-      marshalNumber: marshalNumber.toString(),
-      fullName: `مارشال رقم ${marshalNumber}`,
-      email: `marshal${marshalNumber}@kmt.com`,
-      phone: `+965${99000000 + marshalNumber}`,
-      nationality: 'الكويت',
-      status: 'pending', // في انتظار تسجيل الدخول الأول
-      password: passwordIndex.toString(),
-      hasChangedPassword: false, // لم يغير كلمة المرور بعد
-      createdAt: new Date().toISOString(),
-      lastLogin: null
-    });
-  }
-  return marshals;
+// Admin user for system management
+const adminUser = {
+  email: 'admin@kmt.com',
+  password: 'admin123',
+  role: 'admin',
+  name: 'مدير النظام'
 };
 
-const mockMarshals = generateMarshals();
-
-// إضافة بعض المارشال المُفعلين للاختبار (بدءاً من 100)
-mockMarshals[0] = {
-  id: 'KMT-100',
-  marshalNumber: '100',
-  fullName: 'أحمد محمد الكويتي',
-  email: 'marshal100@kmt.com',
-  phone: '+96599100100',
-  nationality: 'الكويت',
-  status: 'active',
-  password: '123456', // غير كلمة المرور
-  hasChangedPassword: true,
-  createdAt: new Date().toISOString(),
-  lastLogin: new Date().toISOString()
-};
-
-mockMarshals[1] = {
-  id: 'KMT-101', 
-  marshalNumber: '101',
-  fullName: 'فاطمة الزهراء',
-  email: 'marshal101@kmt.com',
-  phone: '+96599100101',
-  nationality: 'الكويت',
-  status: 'active',
-  password: '654321',
-  hasChangedPassword: true,
-  createdAt: new Date().toISOString(),
-  lastLogin: new Date().toISOString()
-};
-
-const mockRaces = [
-  {
-    id: 'race-1',
-    name: 'سباق الكأس الذهبي',
-    date: '2025-11-15',
-    time: '15:00',
-    location: 'حلبة الكويت الرئيسية',
-    assignedMarshals: ['KMT-100', 'KMT-101'],
-    status: 'active'
-  },
-  {
-    id: 'race-2', 
-    name: 'سباق السرعة المفتوح',
-    date: '2025-11-20',
-    time: '18:00', 
-    location: 'حلبة التدريب',
-    assignedMarshals: ['KMT-102'],
-    status: 'pending'
-  }
-];
-
-// Auth endpoints
-app.post('/api/auth/login', (req, res) => {
-  const { email, password, marshalNumber } = req.body;
-  
-  // إذا كان تسجيل دخول بالبريد الإلكتروني (للمدير)
-  if (email && email === 'admin@kmt.com' && password === 'admin123') {
-    const token = jwt.sign(
-      { userId: 'admin', userType: 'manager', email: email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+// Auth routes
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
     
-    return res.json({
-      success: true,
-      token: token,
-      user: { id: 'admin', email, userType: 'manager', fullName: 'مدير النظام' }
-    });
-  }
-  
-  // إذا كان تسجيل دخول برقم المارشال
-  if (marshalNumber) {
-    // البحث برقم المارشال الكامل (KMT-XXX) أو الرقم فقط
-    const searchNumber = marshalNumber.startsWith('KMT-') ? marshalNumber : `KMT-${marshalNumber}`;
-    const marshal = mockMarshals.find(m => m.id === searchNumber || m.marshalNumber === marshalNumber);
-    
-    if (marshal && marshal.password === password) {
-      // تحديث آخر دخول
-      marshal.lastLogin = new Date().toISOString();
-      
+    // Check admin login
+    if (email === adminUser.email && password === adminUser.password) {
       const token = jwt.sign(
-        { userId: marshal.id, userType: 'marshall', marshalNumber: marshal.marshalNumber },
-        JWT_SECRET,
-        { expiresIn: '7d' }
+        { 
+          userId: 'admin', 
+          email: adminUser.email, 
+          role: 'admin' 
+        }, 
+        JWT_SECRET, 
+        { expiresIn: '24h' }
       );
       
       return res.json({
         success: true,
-        token: token,
-        user: { ...marshal, userType: 'marshall' }
+        token,
+        user: {
+          id: 'admin',
+          email: adminUser.email,
+          name: adminUser.name,
+          role: 'admin'
+        }
       });
     }
-  }
-  
-  // محاولة البحث بالبريد الإلكتروني (للتوافق مع النظام القديم)
-  if (email) {
-    const marshal = mockMarshals.find(m => m.email === email);
-    if (marshal && marshal.password === password) {
-      marshal.lastLogin = new Date().toISOString();
+    
+    // Check marshal login
+    const marshals = dataManager.getMarshals();
+    const marshal = marshals.find(m => m.email === email && m.password === password);
+    
+    if (marshal) {
+      // Update last login time
+      dataManager.updateMarshal(marshal.id, { 
+        lastLogin: new Date().toISOString(),
+        status: 'active'
+      });
       
       const token = jwt.sign(
-        { userId: marshal.id, userType: 'marshall', marshalNumber: marshal.marshalNumber },
-        JWT_SECRET,
-        { expiresIn: '7d' }
+        { 
+          userId: marshal.id, 
+          email: marshal.email, 
+          role: 'marshal' 
+        }, 
+        JWT_SECRET, 
+        { expiresIn: '24h' }
       );
       
       return res.json({
         success: true,
-        token: token,
-        user: { ...marshal, userType: 'marshall' }
+        token,
+        user: {
+          id: marshal.id,
+          email: marshal.email,
+          name: marshal.fullName,
+          role: 'marshal',
+          marshalNumber: marshal.marshalNumber,
+          hasChangedPassword: marshal.hasChangedPassword
+        }
       });
     }
+    
+    res.status(401).json({ 
+      success: false, 
+      message: 'بيانات الدخول غير صحيحة' 
+    });
+    
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في الخادم' 
+    });
   }
-  
-  res.status(401).json({ message: 'بيانات دخول غير صحيحة' });
 });
 
 // إنشاء المارشال بالجملة
 app.post('/api/users/create-bulk-marshals', (req, res) => {
-  const { count } = req.body;
-  
-  // التحقق من البيانات
-  if (!count || count < 1 || count > 100) {
-    return res.status(400).json({ 
-      message: 'عدد المارشال يجب أن يكون بين 1 و 100' 
+  try {
+    const { count } = req.body;
+    
+    if (!count || count < 1 || count > 100) {
+      return res.status(400).json({ 
+        message: 'عدد المارشال يجب أن يكون بين 1 و 100' 
+      });
+    }
+
+    const marshals = dataManager.getMarshals();
+    const existingNumbers = marshals.map(m => parseInt(m.marshalNumber)).filter(n => !isNaN(n));
+    const lastNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 99;
+    
+    const newMarshals = [];
+    const startId = lastNumber + 1;
+    
+    for (let i = 0; i < count; i++) {
+      const marshalNumber = startId + i;
+      
+      const newMarshal = dataManager.addMarshal({
+        fullName: `مارشال رقم ${marshalNumber}`,
+        email: `marshal${marshalNumber}@kmt.com`,
+        phone: `+965${99000000 + marshalNumber}`,
+        nationality: 'الكويت',
+        password: '123456'
+      });
+      
+      if (newMarshal) {
+        newMarshals.push(newMarshal);
+      }
+    }
+    
+    res.json({
+      message: `تم إنشاء ${newMarshals.length} مارشال بنجاح`,
+      created: newMarshals.length,
+      startId: startId,
+      endId: startId + newMarshals.length - 1,
+      marshals: newMarshals
+    });
+  } catch (error) {
+    console.error('Error creating bulk marshals:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في إنشاء المارشال' 
     });
   }
-
-  // العثور على آخر رقم مارشال موجود
-  const existingNumbers = mockMarshals.map(m => parseInt(m.marshalNumber)).filter(n => !isNaN(n));
-  const lastNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 99;
-  
-  const newMarshals = [];
-  const startId = lastNumber + 1;
-  const endId = startId + count - 1;
-  
-  for (let i = 0; i < count; i++) {
-    const marshalNumber = startId + i;
-    
-    const newMarshal = {
-      id: `KMT-${marshalNumber}`,
-      marshalNumber: marshalNumber.toString(),
-      fullName: `مارشال رقم ${marshalNumber}`,
-      email: `marshal${marshalNumber}@kmt.com`,
-      phone: `+965${99000000 + marshalNumber}`,
-      nationality: 'الكويت',
-      status: 'pending',
-      password: '123456', // كلمة مرور موحدة
-      hasChangedPassword: false,
-      createdAt: new Date().toISOString(),
-      lastLogin: null
-    };
-    
-    newMarshals.push(newMarshal);
-    mockMarshals.push(newMarshal);
-  }
-  
-  res.json({
-    message: `تم إنشاء ${count} مارشال بنجاح`,
-    created: count,
-    startId: startId,
-    endId: endId,
-    marshals: newMarshals
-  });
 });
 
-// Marshals endpoints
+// Marshal management routes
 app.get('/api/users/marshals', (req, res) => {
-  res.json({ marshals: mockMarshals });
+  try {
+    const marshals = dataManager.getMarshals();
+    res.json({ marshals });
+  } catch (error) {
+    console.error('Error fetching marshals:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في جلب بيانات المارشال' 
+    });
+  }
+});
+
+app.get('/api/users/marshals/:id', (req, res) => {
+  try {
+    const marshals = dataManager.getMarshals();
+    const marshal = marshals.find(m => m.id === req.params.id);
+    
+    if (!marshal) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'المارشال غير موجود' 
+      });
+    }
+    
+    res.json({ marshal });
+  } catch (error) {
+    console.error('Error fetching marshal:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في جلب بيانات المارشال' 
+    });
+  }
+});
+
+app.put('/api/users/marshals/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    
+    // Add update timestamp
+    updates.updatedAt = new Date().toISOString();
+    
+    const success = dataManager.updateMarshal(id, updates);
+    
+    if (success) {
+      const marshals = dataManager.getMarshals();
+      const updatedMarshal = marshals.find(m => m.id === id);
+      res.json({ 
+        success: true, 
+        marshal: updatedMarshal,
+        message: 'تم تحديث بيانات المارشال بنجاح' 
+      });
+    } else {
+      res.status(404).json({ 
+        success: false, 
+        message: 'المارشال غير موجود' 
+      });
+    }
+  } catch (error) {
+    console.error('Error updating marshal:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في تحديث بيانات المارشال' 
+    });
+  }
+});
+
+app.post('/api/users/marshals', auth, async (req, res) => {
+  try {
+    const marshalData = req.body;
+    const newMarshal = dataManager.addMarshal(marshalData);
+    
+    if (newMarshal) {
+      res.status(201).json({ 
+        success: true, 
+        marshal: newMarshal,
+        message: 'تم إضافة المارشال بنجاح' 
+      });
+    } else {
+      res.status(500).json({ 
+        success: false, 
+        message: 'فشل في إضافة المارشال' 
+      });
+    }
+  } catch (error) {
+    console.error('Error creating marshal:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في إضافة المارشال' 
+    });
+  }
+});
+
+app.delete('/api/users/marshals/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const marshals = dataManager.getMarshals();
+    const filteredMarshals = marshals.filter(m => m.id !== id);
+    
+    if (marshals.length !== filteredMarshals.length) {
+      dataManager.saveMarshals(filteredMarshals);
+      res.json({ 
+        success: true, 
+        message: 'تم حذف المارشال بنجاح' 
+      });
+    } else {
+      res.status(404).json({ 
+        success: false, 
+        message: 'المارشال غير موجود' 
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting marshal:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في حذف المارشال' 
+    });
+  }
 });
 
 // تحديث ملف المارشال الشخصي
 app.put('/api/users/profile', auth, async (req, res) => {
   try {
-    const { marshallInfo } = req.body;
-    const userId = req.user._id || req.user.userId || req.user.id;
+    const { marshallInfo, fullName, phone } = req.body;
+    const userId = req.user.userId || req.user.id;
 
-    console.log('Profile update request received');
-    console.log('User ID from token:', userId);
-    console.log('User object from token:', req.user);
-    console.log('Marshall info to update:', JSON.stringify(marshallInfo, null, 2));
+    console.log('Profile update request received for user:', userId);
 
-    // البحث عن المارشال باستخدام معرف المستخدم
-    let marshalIndex = -1;
-    
-    // البحث بطرق مختلفة للعثور على المارشال
-    if (typeof userId === 'string' && userId.startsWith('KMT-')) {
-      marshalIndex = mockMarshals.findIndex(m => m.id === userId);
-      console.log('Searching by KMT ID:', userId);
-    } else if (req.user.marshalNumber) {
-      marshalIndex = mockMarshals.findIndex(m => m.marshalNumber === req.user.marshalNumber);
-      console.log('Searching by marshal number:', req.user.marshalNumber);
-    } else {
-      // البحث في حقول أخرى
-      marshalIndex = mockMarshals.findIndex(m => 
-        m.id === userId || 
-        m.marshalNumber === userId || 
-        m.email === req.user.email
-      );
-      console.log('Searching by various fields');
-    }
+    // البحث عن المارشال
+    const marshals = dataManager.getMarshals();
+    let marshal = marshals.find(m => m.id === userId);
 
-    console.log('Marshal index found:', marshalIndex);
-
-    if (marshalIndex === -1) {
-      console.log('Marshal not found. Available marshals:');
-      mockMarshals.forEach((m, i) => {
-        console.log(`${i}: { id: ${m.id}, marshalNumber: ${m.marshalNumber}, email: ${m.email} }`);
+    if (!marshal) {
+      console.log('Marshal not found');
+      return res.status(404).json({
+        success: false,
+        message: 'المارشال غير موجود'
       });
-      return res.status(404).json({ message: 'المارشال غير موجود' });
     }
 
-    // دمج البيانات الجديدة مع البيانات الموجودة
-    const currentMarshal = mockMarshals[marshalIndex];
-    const updatedMarshal = {
-      ...currentMarshal,
-      // تحديث الاسم إذا تم إرساله
-      ...(req.body.fullName && { fullName: req.body.fullName }),
-      // تحديث الهاتف إذا تم إرساله
-      ...(req.body.phone && { phone: req.body.phone }),
-      marshallInfo: {
-        ...currentMarshal.marshallInfo,
-        ...marshallInfo
-      },
+    // تحديث بيانات المارشال
+    const updateData = {
       updatedAt: new Date().toISOString()
     };
 
-    // تحديث المارشال في القائمة
-    mockMarshals[marshalIndex] = updatedMarshal;
+    if (fullName) updateData.fullName = fullName;
+    if (phone) updateData.phone = phone;
+    if (marshallInfo) {
+      updateData.marshallInfo = {
+        ...marshal.marshallInfo,
+        ...marshallInfo
+      };
+    }
 
-    console.log('Profile updated successfully for marshal:', updatedMarshal.id);
+    const success = dataManager.updateMarshal(marshal.id, updateData);
 
-    res.json({
-      message: 'تم تحديث الملف الشخصي بنجاح',
-      user: {
-        ...updatedMarshal,
-        userType: 'marshall'
-      }
-    });
+    if (success) {
+      const updatedMarshals = dataManager.getMarshals();
+      const updatedMarshal = updatedMarshals.find(m => m.id === marshal.id);
+      
+      res.json({
+        success: true,
+        message: 'تم حفظ الملف الشخصي بنجاح',
+        marshal: updatedMarshal
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'فشل في حفظ البيانات'
+      });
+    }
+
   } catch (error) {
     console.error('Error updating profile:', error);
-    res.status(500).json({ message: 'خطأ في الخادم: ' + error.message });
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في الخادم أثناء تحديث الملف الشخصي'
+    });
   }
 });
 
 // الحصول على معلومات المارشال الشخصية
 app.get('/api/users/profile', auth, async (req, res) => {
   try {
-    const userId = req.user._id || req.user.userId || req.user.id;
-
-    console.log('Profile fetch request:', { userId });
-
-    // البحث عن المارشال باستخدام معرف المستخدم
-    let marshal = null;
+    const userId = req.user.userId || req.user.id;
     
-    // البحث بطرق مختلفة للعثور على المارشال
-    if (typeof userId === 'string' && userId.startsWith('KMT-')) {
-      marshal = mockMarshals.find(m => m.id === userId);
-    } else if (req.user.marshalNumber) {
-      marshal = mockMarshals.find(m => m.marshalNumber === req.user.marshalNumber);
-    } else {
-      // البحث في حقول أخرى
-      marshal = mockMarshals.find(m => 
-        m.id === userId || 
-        m.marshalNumber === userId || 
-        m.email === req.user.email
-      );
-    }
-    
+    const marshals = dataManager.getMarshals();
+    const marshal = marshals.find(m => m.id === userId);
+
     if (!marshal) {
-      console.log('Marshal not found. Available marshals:', mockMarshals.map(m => ({ id: m.id, marshalNumber: m.marshalNumber })));
-      return res.status(404).json({ message: 'المارشال غير موجود' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'المارشال غير موجود' 
+      });
     }
 
     res.json({
+      success: true,
       user: {
         ...marshal,
         userType: 'marshall'
       }
     });
+
   } catch (error) {
     console.error('Error fetching profile:', error);
-    res.status(500).json({ message: 'خطأ في الخادم' });
+    res.status(500).json({ 
+      success: false,
+      message: 'خطأ في الخادم' 
+    });
   }
 });
 
-// Races endpoints
+// Race management routes
 app.get('/api/races', (req, res) => {
-  res.json({ races: mockRaces });
-});
-
-app.post('/api/races', (req, res) => {
-  const newRace = {
-    id: 'race-' + (mockRaces.length + 1),
-    ...req.body,
-    assignedMarshals: [],
-    status: 'pending'
-  };
-  mockRaces.push(newRace);
-  res.json({ success: true, race: newRace });
-});
-
-// Marshal assignment
-app.post('/api/races/:raceId/assign-marshal', (req, res) => {
-  const { raceId } = req.params;
-  const { marshalId } = req.body;
-  
-  const race = mockRaces.find(r => r.id === raceId);
-  if (race && !race.assignedMarshals.includes(marshalId)) {
-    race.assignedMarshals.push(marshalId);
+  try {
+    const races = dataManager.getRaces();
+    res.json({ races });
+  } catch (error) {
+    console.error('Error fetching races:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في جلب بيانات السباقات' 
+    });
   }
-  
-  res.json({ success: true, race });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ 
+    success: false, 
+    message: 'خطأ في الخادم' 
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ 
+    success: false, 
+    message: 'المسار غير موجود' 
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 KMT Demo API running on port ${PORT}`);
-  console.log(`🌐 Access at: http://localhost:${PORT}`);
+  console.log(`🚀 KMT Event Management Server running on port ${PORT}`);
+  console.log(`💾 Using persistent data storage`);
+  console.log(`🌐 CORS enabled for production domains`);
+  console.log(`🔐 JWT authentication enabled`);
 });
