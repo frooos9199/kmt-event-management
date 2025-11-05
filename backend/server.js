@@ -271,6 +271,8 @@ app.put('/api/users/profile', auth, async (req, res) => {
     const currentMarshal = mockMarshals[marshalIndex];
     const updatedMarshal = {
       ...currentMarshal,
+      // تحديث الاسم إذا تم إرساله
+      ...(req.body.fullName && { fullName: req.body.fullName }),
       marshallInfo: {
         ...currentMarshal.marshallInfo,
         ...marshallInfo

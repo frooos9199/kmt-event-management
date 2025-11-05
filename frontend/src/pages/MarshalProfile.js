@@ -171,13 +171,26 @@ const MarshalProfile = ({ onPageChange }) => {
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
       console.log('Sending profile update to:', `${API_URL}/api/users/profile`);
       
+      const updateData = {
+        fullName: formData.fullName,
+        marshallInfo: {
+          dateOfBirth: formData.dateOfBirth,
+          nationality: formData.nationality,
+          nationalId: formData.nationalId,
+          profileImage: formData.profileImage,
+          specializations: formData.specializations,
+          emergencyContact: formData.emergencyContact,
+          experienceLevel: formData.experienceLevel
+        }
+      };
+      
       const response = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ marshallInfo: formData })
+        body: JSON.stringify(updateData)
       });
 
       console.log('Response status:', response.status);
