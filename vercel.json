@@ -11,11 +11,7 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|ico|png|jpg|svg))",
+      "src": "/(.*\\.(js|css|ico|png|jpg|svg|woff|woff2|ttf|eot))",
       "dest": "/frontend/build/$1"
     },
     {
@@ -25,5 +21,8 @@
   ],
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/build",
-  "installCommand": "cd frontend && npm install"
+  "installCommand": "cd frontend && npm install",
+  "env": {
+    "CI": "false"
+  }
 }
