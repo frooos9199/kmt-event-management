@@ -1,6 +1,6 @@
 [build]
   # Build command for React frontend
-  command = "cd frontend && npm install && npm run build"
+  command = "cd frontend && npm install && CI=false npm run build"
   # Directory to publish
   publish = "frontend/build"
   # Base directory (leave empty for root)
@@ -9,6 +9,7 @@
 # Fallback to static site if React build fails
 [context.production.environment]
   NODE_VERSION = "18"
+  CI = "false"
 
 # Redirect rules for Single Page Application
 [[redirects]]

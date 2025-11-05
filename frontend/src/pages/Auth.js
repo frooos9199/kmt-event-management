@@ -3,7 +3,7 @@ import TestUsers from '../components/TestUsers';
 import './KMT-Auth-Original.css';
 
 const Auth = ({ onPageChange }) => {
-  const [userType, setUserType] = useState('worker');
+  // const [userType, setUserType] = useState('worker'); // Commented out unused state
   const [showTestUsers, setShowTestUsers] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
