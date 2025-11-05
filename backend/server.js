@@ -22,33 +22,60 @@ app.get('/', (req, res) => {
   });
 });
 
-// Mock data
-const mockMarshals = [
-  {
-    id: 'KMT-100',
-    fullName: 'أحمد محمد الكويتي',
-    email: 'ahmed@kmt.com',
-    phone: '+96599112233',
-    nationality: 'الكويت',
-    status: 'approved'
-  },
-  {
-    id: 'KMT-101', 
-    fullName: 'فاطمة الزهراء',
-    email: 'fatima@kmt.com',
-    phone: '+96599445566',
-    nationality: 'الكويت',
-    status: 'approved'
-  },
-  {
-    id: 'KMT-102',
-    fullName: 'خالد العتيبي', 
-    email: 'khalid@kmt.com',
-    phone: '+96599778899',
-    nationality: 'السعودية',
-    status: 'approved'
+// Mock data - نظام المارشال الجديد مع أرقام متسلسلة من 100
+const generateMarshals = () => {
+  const marshals = [];
+  for (let i = 0; i < 50; i++) {
+    const marshalNumber = 100 + i; // يبدأ من 100 إلى 149
+    const passwordIndex = (i % 6) + 1; // كلمات مرور من 1 إلى 6 (تتكرر)
+    
+    marshals.push({
+      id: `KMT-${marshalNumber}`,
+      marshalNumber: marshalNumber.toString(),
+      fullName: `مارشال رقم ${marshalNumber}`,
+      email: `marshal${marshalNumber}@kmt.com`,
+      phone: `+965${99000000 + marshalNumber}`,
+      nationality: 'الكويت',
+      status: 'pending', // في انتظار تسجيل الدخول الأول
+      password: passwordIndex.toString(),
+      hasChangedPassword: false, // لم يغير كلمة المرور بعد
+      createdAt: new Date().toISOString(),
+      lastLogin: null
+    });
   }
-];
+  return marshals;
+};
+
+const mockMarshals = generateMarshals();
+
+// إضافة بعض المارشال المُفعلين للاختبار (بدءاً من 100)
+mockMarshals[0] = {
+  id: 'KMT-100',
+  marshalNumber: '100',
+  fullName: 'أحمد محمد الكويتي',
+  email: 'marshal100@kmt.com',
+  phone: '+96599100100',
+  nationality: 'الكويت',
+  status: 'active',
+  password: '123456', // غير كلمة المرور
+  hasChangedPassword: true,
+  createdAt: new Date().toISOString(),
+  lastLogin: new Date().toISOString()
+};
+
+mockMarshals[1] = {
+  id: 'KMT-101', 
+  marshalNumber: '101',
+  fullName: 'فاطمة الزهراء',
+  email: 'marshal101@kmt.com',
+  phone: '+96599100101',
+  nationality: 'الكويت',
+  status: 'active',
+  password: '654321',
+  hasChangedPassword: true,
+  createdAt: new Date().toISOString(),
+  lastLogin: new Date().toISOString()
+};
 
 const mockRaces = [
   {
