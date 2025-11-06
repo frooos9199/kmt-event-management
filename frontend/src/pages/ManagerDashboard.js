@@ -127,7 +127,7 @@ const ManagerDashboard = ({ onPageChange }) => {
     setShowCreateEvent(false);
   };
 
-  // عرض loading فقط إذا لم تكن الصفحة جاهزة
+  // عرض loading بسيط
   if (!pageReady || !user) {
     return (
       <div style={{
@@ -140,118 +140,11 @@ const ManagerDashboard = ({ onPageChange }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 9999
+        zIndex: 9999,
+        color: 'white',
+        fontSize: '24px'
       }}>
-        <div style={{
-          width: '180px',
-          height: '180px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #333, #111)',
-          position: 'relative',
-          border: '8px solid #444',
-          boxShadow: 'inset 0 0 20px rgba(255,0,0,0.5), 0 0 40px rgba(255,0,0,0.3)',
-        }}>
-          {/* خطوط العداد */}
-          {[...Array(8)].map((_, i) => (
-            <div key={i} style={{
-              position: 'absolute',
-              width: '2px',
-              height: '20px',
-              background: '#fff',
-              top: '10px',
-              left: '50%',
-              transformOrigin: '1px 80px',
-              transform: `translateX(-50%) rotate(${-135 + (i * 33.75)}deg)`
-            }}>
-              <span style={{
-                position: 'absolute',
-                top: '25px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                color: '#fff',
-                fontSize: '12px',
-                fontWeight: 'bold'
-              }}>{i === 7 ? 'R' : i}</span>
-            </div>
-          ))}
-          
-          {/* المؤشر المتحرك */}
-          <div style={{
-            position: 'absolute',
-            width: '4px',
-            height: '70px',
-            background: 'linear-gradient(to top, #ff0000, #ff6666)',
-            top: '20px',
-            left: '50%',
-            transformOrigin: '2px 70px',
-            transform: 'translateX(-50%)',
-            borderRadius: '2px',
-            animation: 'rpmSweep 2s ease-in-out infinite alternate',
-            boxShadow: '0 0 10px rgba(255,0,0,0.8)'
-          }} />
-          
-          {/* المركز */}
-          <div style={{
-            position: 'absolute',
-            width: '20px',
-            height: '20px',
-            background: 'radial-gradient(circle, #666, #333)',
-            borderRadius: '50%',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            border: '2px solid #888'
-          }} />
-          
-          {/* النص */}
-          <div style={{
-            position: 'absolute',
-            bottom: '30px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: '#4CAF50',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textAlign: 'center'
-          }}>
-            DSH<br/>20
-          </div>
-          
-          {/* LED */}
-          <div style={{
-            position: 'absolute',
-            bottom: '10px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: '5px'
-          }}>
-            <div style={{width: '8px', height: '8px', borderRadius: '50%', background: '#4CAF50', animation: 'ledBlink 1s infinite'}} />
-            <div style={{width: '8px', height: '8px', borderRadius: '50%', background: '#FFD700', animation: 'ledBlink 1.2s infinite'}} />
-            <div style={{width: '8px', height: '8px', borderRadius: '50%', background: '#f44336', animation: 'ledBlink 1.5s infinite'}} />
-          </div>
-        </div>
-        
-        <p style={{
-          position: 'absolute',
-          bottom: '100px',
-          color: '#fff',
-          fontSize: '18px',
-          textAlign: 'center'
-        }}>
-          🏎️ جاري تحضير لوحة التحكم...
-        </p>
-        
-        <style>{`
-          @keyframes rpmSweep {
-            0% { transform: translateX(-50%) rotate(-135deg); }
-            100% { transform: translateX(-50%) rotate(135deg); }
-          }
-          @keyframes ledBlink {
-            0%, 50% { opacity: 0.3; }
-            51%, 100% { opacity: 1; }
-          }
-        `}</style>
+        Loading...
       </div>
     );
   }
