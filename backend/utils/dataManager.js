@@ -208,6 +208,18 @@ const saveRaces = (races) => {
   return saveData(data);
 };
 
+// إضافة سباق جديد
+const addRace = (race) => {
+  try {
+    const races = getRaces();
+    races.push(race);
+    return saveRaces(races);
+  } catch (error) {
+    console.error('Error adding race:', error);
+    return false;
+  }
+};
+
 module.exports = {
   initDatabase,
   loadData,
@@ -217,5 +229,6 @@ module.exports = {
   updateMarshal,
   addMarshal,
   getRaces,
-  saveRaces
+  saveRaces,
+  addRace
 };

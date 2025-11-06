@@ -473,6 +473,87 @@ app.get('/api/races', (req, res) => {
   }
 });
 
+// إنشاء سباق جديد
+app.post('/api/races', auth, (req, res) => {
+  try {
+    const { 
+      title, 
+      titleEnglish, 
+      description, 
+      raceType, 
+      track, 
+      startDate, 
+      endDate, 
+      startTime, 
+      endTime, 
+      requiredMarshalls,
+      marshalTypes 
+    } = req.body;
+
+    // التحقق من البيانات المطلوبة
+    if (!title || !startDate || !startTime) {
+      return res.status(400).json({
+        success: false,
+        message: 'البيانات المطلوبة مفقودة (العنوان، التاريخ، الوقت)'
+      });
+    }
+
+    // إنشاء ID فريد للسباق
+    const raceId = `race-${Date.now()}`;
+
+    // إعداد بيانات السباق
+    const newRace = {
+      id: raceId,
+      title,
+      titleEnglish: titleEnglish || title,
+      description: description || '',
+      raceType,
+      track,
+      startDate,
+      endDate: endDate || startDate,
+      startTime,
+      endTime: endTime || startTime,
+      requiredMarshalls: parseInt(requiredMarshalls) || 0,
+      marshalTypes: marshalTypes || [],
+      assignedMarshals: [],
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      createdBy: req.user.userId,
+      updatedAt: new Date().toISOString()
+    };
+
+    // حفظ السباق
+    const success = dataManager.addRace(newRace);
+
+    if (success) {
+      // إرسال إشعارات للمارشال (إذا كان النظام يدعم ذلك)
+      const marshals = dataManager.getMarshals();
+      const activeMarshals = marshals.filter(m => m.status === 'active');
+      
+      console.log(`تم إنشاء سباق جديد: ${title}`);
+      console.log(`عدد المارشال الذين سيتم إشعارهم: ${activeMarshals.length}`);
+
+      res.json({
+        success: true,
+        message: 'تم إنشاء السباق بنجاح',
+        race: newRace,
+        notifiedMarshals: activeMarshals.length
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'فشل في حفظ السباق'
+      });
+    }
+  } catch (error) {
+    console.error('Error creating race:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في إنشاء السباق'
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
