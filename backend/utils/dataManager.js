@@ -220,6 +220,36 @@ const addRace = (race) => {
   }
 };
 
+// حذف سباق
+const deleteRace = (raceId) => {
+  try {
+    const races = getRaces();
+    const filteredRaces = races.filter(race => race.id !== raceId);
+    return saveRaces(filteredRaces);
+  } catch (error) {
+    console.error('Error deleting race:', error);
+    return false;
+  }
+};
+
+// تحديث سباق
+const updateRace = (raceId, updates) => {
+  try {
+    const races = getRaces();
+    const raceIndex = races.findIndex(race => race.id === raceId);
+    
+    if (raceIndex === -1) {
+      return false;
+    }
+    
+    races[raceIndex] = { ...races[raceIndex], ...updates };
+    return saveRaces(races);
+  } catch (error) {
+    console.error('Error updating race:', error);
+    return false;
+  }
+};
+
 module.exports = {
   initDatabase,
   loadData,
@@ -230,5 +260,7 @@ module.exports = {
   addMarshal,
   getRaces,
   saveRaces,
-  addRace
+  addRace,
+  deleteRace,
+  updateRace
 };

@@ -554,6 +554,99 @@ app.post('/api/races', auth, (req, res) => {
   }
 });
 
+// حذف سباق
+app.delete('/api/races/:id', auth, (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // التحقق من وجود السباق
+    const races = dataManager.getRaces();
+    const race = races.find(r => r.id === id);
+    
+    if (!race) {
+      return res.status(404).json({
+        success: false,
+        message: 'السباق غير موجود'
+      });
+    }
+    
+    // حذف السباق
+    const success = dataManager.deleteRace(id);
+    
+    if (success) {
+      console.log(`تم حذف السباق: ${race.title} (${id})`);
+      
+      res.json({
+        success: true,
+        message: 'تم حذف السباق بنجاح',
+        deletedRace: { id: id, title: race.title }
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'فشل في حذف السباق'
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting race:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في حذف السباق'
+    });
+  }
+});
+
+// تحديث سباق
+app.put('/api/races/:id', auth, (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    
+    // التحقق من وجود السباق
+    const races = dataManager.getRaces();
+    const race = races.find(r => r.id === id);
+    
+    if (!race) {
+      return res.status(404).json({
+        success: false,
+        message: 'السباق غير موجود'
+      });
+    }
+    
+    // تحديث البيانات
+    const updatedRace = {
+      ...race,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+      id: id // التأكد من عدم تغيير الـ ID
+    };
+    
+    // حفظ التحديث
+    const success = dataManager.updateRace(id, updatedRace);
+    
+    if (success) {
+      console.log(`تم تحديث السباق: ${updatedRace.title} (${id})`);
+      
+      res.json({
+        success: true,
+        message: 'تم تحديث السباق بنجاح',
+        race: updatedRace
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'فشل في تحديث السباق'
+      });
+    }
+  } catch (error) {
+    console.error('Error updating race:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في تحديث السباق'
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
