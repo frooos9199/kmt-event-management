@@ -131,7 +131,11 @@ const ManagerDashboard = ({ onPageChange }) => {
   if (!pageReady || !user) {
     return (
       <div className="page-loading-overlay">
-        <LoadingSpinner message="جاري تحضير لوحة التحكم..." size="large" />
+        <LoadingSpinner 
+          message="جاري تحضير لوحة التحكم..." 
+          size="large" 
+          style="formula"
+        />
       </div>
     );
   }

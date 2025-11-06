@@ -149,7 +149,11 @@ const RacesManagement = ({ onPageChange }) => {
   if (!pageReady) {
     return (
       <div className="page-loading-overlay">
-        <LoadingSpinner message="جاري تحضير صفحة إدارة السباقات..." size="large" />
+        <LoadingSpinner 
+          message="جاري تحضير صفحة إدارة السباقات..." 
+          size="large" 
+          style="default"
+        />
       </div>
     );
   }
@@ -180,7 +184,11 @@ const RacesManagement = ({ onPageChange }) => {
             
             {loading && races.length === 0 ? (
               <div className="inline-loading" style={{textAlign: 'center', padding: '40px'}}>
-                <LoadingSpinner message="جاري تحميل السباقات..." size="medium" />
+                <LoadingSpinner 
+                  message="جاري تحميل السباقات..." 
+                  size="medium" 
+                  style="default"
+                />
               </div>
             ) : races.length === 0 ? (
               <div className="empty-state">

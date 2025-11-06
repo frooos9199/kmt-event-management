@@ -400,7 +400,11 @@ const MarshalManagement = ({ onPageChange }) => {
   if (!pageReady) {
     return (
       <div className="page-loading-overlay">
-        <LoadingSpinner message="جاري تحضير صفحة إدارة المارشال..." size="large" />
+        <LoadingSpinner 
+          message="جاري تحضير صفحة إدارة المارشال..." 
+          size="large" 
+          style="formula"
+        />
       </div>
     );
   }
@@ -642,7 +646,11 @@ const MarshalManagement = ({ onPageChange }) => {
       <div className="marshals-list">
         {loading && !showForm && (
           <div style={{textAlign: 'center', padding: '20px'}}>
-            <LoadingSpinner message="جاري تحميل بيانات المارشال..." size="medium" />
+            <LoadingSpinner 
+              message="جاري تحميل بيانات المارشال..." 
+              size="medium" 
+              style="default"
+            />
           </div>
         )}
         

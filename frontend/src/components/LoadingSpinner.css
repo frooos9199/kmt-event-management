@@ -1,4 +1,4 @@
-/* Loading Spinner - Modern & Professional */
+/* RPM Loading Gauge - Racing Style */
 .loading-spinner-container {
   display: flex;
   flex-direction: column;
@@ -9,82 +9,232 @@
 }
 
 .loading-spinner-container.small {
-  min-height: 100px;
+  min-height: 120px;
   padding: 20px;
 }
 
+.loading-spinner-container.small .rpm-gauge {
+  width: 80px;
+  height: 80px;
+}
+
 .loading-spinner-container.large {
-  min-height: 400px;
+  min-height: 300px;
   padding: 60px;
 }
 
-.loading-spinner {
-  display: flex;
-  gap: 8px;
+.loading-spinner-container.large .rpm-gauge {
+  width: 180px;
+  height: 180px;
+}
+
+/* عداد RPM الرئيسي */
+.rpm-gauge {
+  width: 140px;
+  height: 140px;
+  position: relative;
   margin-bottom: 20px;
 }
 
-.spinner-circle {
+.gauge-background {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at center, #1a1a1a 30%, #2d2d2d 70%, #000 100%);
+  border: 3px solid #333;
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0,0.8),
+    0 0 20px rgba(227, 30, 36, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* خطوط وأرقام العداد */
+.gauge-marks {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-mark {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 2px;
+  height: 15px;
+  transform-origin: 1px 60px;
+}
+
+.mark-line {
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(to bottom, #e31e24, #ff6b7a);
+  border-radius: 1px;
+  box-shadow: 0 0 3px rgba(227, 30, 36, 0.8);
+}
+
+.mark-number {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  font-family: 'Orbitron', 'Arial', sans-serif;
+  text-shadow: 0 0 5px rgba(227, 30, 36, 0.8);
+}
+
+/* المؤشر المتحرك */
+.gauge-needle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 50px;
+  transform-origin: 1px 1px;
+  animation: rpmSweep 2s ease-in-out infinite;
+}
+
+.needle {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, #e31e24, #fff);
+  border-radius: 1px;
+  box-shadow: 
+    0 0 10px rgba(227, 30, 36, 0.9),
+    0 0 20px rgba(255, 255, 255, 0.3);
+  filter: drop-shadow(0 0 5px #e31e24);
+}
+
+/* نقطة المركز */
+.gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.center-dot {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e31e24, #ff6b7a);
-  animation: bounce 1.4s ease-in-out infinite both;
+  background: 
+    radial-gradient(circle at 30% 30%, #fff, #e31e24);
+  border: 2px solid #333;
+  box-shadow: 0 0 15px rgba(227, 30, 36, 0.8);
 }
 
-.spinner-circle:nth-child(1) {
-  animation-delay: -0.32s;
+/* نص RPM */
+.rpm-text {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+  font-family: 'Orbitron', 'Arial', sans-serif;
 }
 
-.spinner-circle:nth-child(2) {
-  animation-delay: -0.16s;
+.rpm-label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: #e31e24;
+  text-shadow: 0 0 5px rgba(227, 30, 36, 0.8);
 }
 
-.spinner-circle:nth-child(3) {
-  animation-delay: 0;
+.rpm-value {
+  display: block;
+  font-size: 8px;
+  color: #ccc;
+  margin-top: 2px;
 }
 
+/* مؤشرات LED */
+.led-indicators {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: ledBlink 3s ease-in-out infinite;
+}
+
+.led.green {
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+  animation-delay: 0s;
+}
+
+.led.yellow {
+  background: #ffff00;
+  box-shadow: 0 0 10px #ffff00;
+  animation-delay: 1s;
+}
+
+.led.red {
+  background: #ff0000;
+  box-shadow: 0 0 10px #ff0000;
+  animation-delay: 2s;
+}
+
+/* الرسالة */
 .loading-message {
-  color: #666;
+  color: #333;
   font-size: 1rem;
   margin: 0;
   text-align: center;
   font-family: 'Tajawal', Arial, sans-serif;
   direction: rtl;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .loading-spinner-container.small .loading-message {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .loading-spinner-container.large .loading-message {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
-@keyframes bounce {
-  0%, 80%, 100% {
-    transform: scale(0.8);
-    opacity: 0.5;
+/* الأنيميشن الرئيسي للمؤشر */
+@keyframes rpmSweep {
+  0% {
+    transform: rotate(-135deg);
   }
-  40% {
-    transform: scale(1.2);
-    opacity: 1;
-  }
-}
-
-/* Pulse Animation Alternative */
-.loading-spinner.pulse .spinner-circle {
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(0.8);
-    opacity: 0.6;
+  25% {
+    transform: rotate(-45deg);
   }
   50% {
-    transform: scale(1.1);
+    transform: rotate(45deg);
+  }
+  75% {
+    transform: rotate(135deg);
+  }
+  100% {
+    transform: rotate(-135deg);
+  }
+}
+
+/* أنيميشن LED */
+@keyframes ledBlink {
+  0%, 90% {
+    opacity: 0.3;
+  }
+  10%, 80% {
     opacity: 1;
+    transform: scale(1.2);
   }
 }
 
@@ -95,7 +245,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: 
+    linear-gradient(135deg, 
+      rgba(0,0,0,0.9) 0%, 
+      rgba(20,20,20,0.95) 50%, 
+      rgba(0,0,0,0.9) 100%
+    );
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -103,30 +258,194 @@
 }
 
 .page-loading-overlay .loading-spinner-container {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(227, 30, 36, 0.1);
-  border: 1px solid #f0f0f0;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 50px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(227, 30, 36, 0.3);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.3),
+    inset 0 0 20px rgba(227, 30, 36, 0.1);
+}
+
+.page-loading-overlay .loading-message {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(227, 30, 36, 0.5);
 }
 
 /* Inline Loading */
 .inline-loading {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
-.inline-loading .loading-spinner {
-  margin: 0;
-}
-
-.inline-loading .spinner-circle {
-  width: 8px;
-  height: 8px;
+.inline-loading .rpm-gauge {
+  width: 60px;
+  height: 60px;
 }
 
 .inline-loading .loading-message {
   font-size: 0.9rem;
   margin: 0;
+}
+
+/* نمط سباقات الفورمولا */
+.formula-style {
+  filter: hue-rotate(180deg);
+}
+
+.formula-style .gauge-background {
+  background: 
+    radial-gradient(circle at center, #001122 30%, #003366 70%, #000066 100%);
+}
+
+.formula-style .mark-line {
+  background: linear-gradient(to bottom, #00aaff, #0066cc);
+}
+
+/* أحجام مختلفة للعداد */
+.loading-spinner-container.small .gauge-mark {
+  transform-origin: 1px 35px;
+}
+
+.loading-spinner-container.small .gauge-needle {
+  height: 30px;
+}
+
+.loading-spinner-container.small .mark-number {
+  font-size: 8px;
+  top: 12px;
+}
+
+.loading-spinner-container.small .rpm-label {
+  font-size: 8px;
+}
+
+.loading-spinner-container.small .rpm-value {
+  font-size: 6px;
+}
+
+.loading-spinner-container.large .gauge-mark {
+  transform-origin: 1px 80px;
+}
+
+.loading-spinner-container.large .gauge-needle {
+  height: 70px;
+}
+
+.loading-spinner-container.large .mark-number {
+  font-size: 14px;
+  top: 25px;
+}
+
+.loading-spinner-container.large .rpm-label {
+  font-size: 16px;
+}
+
+.loading-spinner-container.large .rpm-value {
+  font-size: 12px;
+}
+
+/* شعار KMT */
+.kmt-logo {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  filter: drop-shadow(0 0 5px rgba(227, 30, 36, 0.8));
+}
+
+/* عداد رقمي */
+.digital-counter {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 20, 0, 0.9);
+  border: 1px solid #00ff00;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: 'Courier New', monospace;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 0, 0.3),
+    inset 0 0 5px rgba(0, 50, 0, 0.5);
+}
+
+.counter-value {
+  color: #00ff00;
+  font-size: 10px;
+  font-weight: bold;
+  text-shadow: 0 0 5px #00ff00;
+  animation: counterFlicker 0.1s ease-in-out infinite alternate;
+}
+
+/* أنيميشن وميض العداد الرقمي */
+@keyframes counterFlicker {
+  0% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+/* تحسين الرسالة مع أيقونة */
+.loading-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-icon {
+  animation: iconPulse 1s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    filter: brightness(1);
+  }
+  50% { 
+    transform: scale(1.2); 
+    filter: brightness(1.5);
+  }
+}
+
+/* أحجام العداد الرقمي للأحجام المختلفة */
+.loading-spinner-container.small .digital-counter {
+  font-size: 8px;
+  padding: 1px 4px;
+}
+
+.loading-spinner-container.small .counter-value {
+  font-size: 8px;
+}
+
+.loading-spinner-container.small .kmt-logo {
+  font-size: 12px;
+  top: 10px;
+}
+
+.loading-spinner-container.large .digital-counter {
+  font-size: 12px;
+  padding: 3px 8px;
+}
+
+.loading-spinner-container.large .counter-value {
+  font-size: 12px;
+}
+
+.loading-spinner-container.large .kmt-logo {
+  font-size: 20px;
+  top: 20px;
+}
+
+/* نمط الفورمولا المحسن */
+.formula-style .digital-counter {
+  background: rgba(0, 0, 40, 0.9);
+  border-color: #0099ff;
+}
+
+.formula-style .counter-value {
+  color: #0099ff;
+  text-shadow: 0 0 5px #0099ff;
 }
