@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './KMT-Original.css';
 
 const RacesManagement = ({ onPageChange }) => {
   const [races, setRaces] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // تبدأ بدون loading
   const [selectedRace, setSelectedRace] = useState(null);
   const [applications, setApplications] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [pageReady, setPageReady] = useState(false);
 
   useEffect(() => {
-    fetchRaces();
-    fetchCurrentUser();
+    // عرض الصفحة فوراً
+    setPageReady(true);
+    
+    // جلب البيانات في الخلفية
+    setTimeout(() => {
+      fetchRaces();
+      fetchCurrentUser();
+    }, 100);
   }, []);
 
   const fetchCurrentUser = async () => {
@@ -138,15 +146,10 @@ const RacesManagement = ({ onPageChange }) => {
     });
   };
 
-  if (loading) {
+  if (!pageReady) {
     return (
-      <div className="kmt-page">
-        <div className="kmt-container">
-          <div className="loading-spinner">
-            <div className="spinner"></div>
-            <p>جاري تحميل السباقات...</p>
-          </div>
-        </div>
+      <div className="page-loading-overlay">
+        <LoadingSpinner message="جاري تحضير صفحة إدارة السباقات..." size="large" />
       </div>
     );
   }
@@ -175,7 +178,11 @@ const RacesManagement = ({ onPageChange }) => {
           <div className="races-list">
             <h2>قائمة السباقات ({races.length})</h2>
             
-            {races.length === 0 ? (
+            {loading && races.length === 0 ? (
+              <div className="inline-loading" style={{textAlign: 'center', padding: '40px'}}>
+                <LoadingSpinner message="جاري تحميل السباقات..." size="medium" />
+              </div>
+            ) : races.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">🏁</div>
                 <h3>لا توجد سباقات</h3>

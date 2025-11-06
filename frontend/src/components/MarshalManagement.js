@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LoadingSpinner from './LoadingSpinner';
 import './MarshalManagement.css';
 
 const MarshalManagement = ({ onPageChange }) => {
@@ -6,6 +7,7 @@ const MarshalManagement = ({ onPageChange }) => {
   const [showForm, setShowForm] = useState(false);
   const [editingMarshal, setEditingMarshal] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pageReady, setPageReady] = useState(false);
 
   console.log('🏁 تم تحميل مكون إدارة المارشال، عدد المارشال:', marshals.length);
   const [formData, setFormData] = useState({
@@ -113,16 +115,22 @@ const MarshalManagement = ({ onPageChange }) => {
   ];
 
   useEffect(() => {
+    // عرض الصفحة فوراً
+    setPageReady(true);
+    
     const token = localStorage.getItem('token');
     console.log('🚀 تشغيل صفحة إدارة المارشال:', { token: !!token });
     
-    if (token) {
-      fetchMarshals();
-    } else {
-      console.log('⚠️ لا يوجد رمز تفويض - يجب تسجيل الدخول أولاً');
-      // محاولة تسجيل دخول تلقائي للاختبار
-      autoLogin();
-    }
+    // جلب البيانات في الخلفية
+    setTimeout(() => {
+      if (token) {
+        fetchMarshals();
+      } else {
+        console.log('⚠️ لا يوجد رمز تفويض - يجب تسجيل الدخول أولاً');
+        // محاولة تسجيل دخول تلقائي للاختبار
+        autoLogin();
+      }
+    }, 100);
   }, []);
 
   // تسجيل دخول تلقائي للاختبار
@@ -388,6 +396,15 @@ const MarshalManagement = ({ onPageChange }) => {
     }
   };
 
+  // عرض loading إذا لم تكن الصفحة جاهزة
+  if (!pageReady) {
+    return (
+      <div className="page-loading-overlay">
+        <LoadingSpinner message="جاري تحضير صفحة إدارة المارشال..." size="large" />
+      </div>
+    );
+  }
+
   return (
     <div className="marshal-management">
       <div className="marshal-header">
@@ -623,7 +640,11 @@ const MarshalManagement = ({ onPageChange }) => {
 
       {/* قائمة المارشال */}
       <div className="marshals-list">
-        {loading && !showForm && <div className="loading">⏳ جاري التحميل...</div>}
+        {loading && !showForm && (
+          <div style={{textAlign: 'center', padding: '20px'}}>
+            <LoadingSpinner message="جاري تحميل بيانات المارشال..." size="medium" />
+          </div>
+        )}
         
         {marshals.length === 0 && !loading && (
           <div className="empty-state" style={{

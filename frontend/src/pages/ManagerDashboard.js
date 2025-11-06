@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CreateEvent from '../components/CreateEvent';
 import MarshalCard from '../components/MarshalCard';
 import MarshalsManagement from '../components/MarshalsManagement';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './KMT-Original.css';
 import './Formula-Enhancement.css';
 import '../styles/MarshalCard.css';
@@ -10,26 +11,35 @@ const ManagerDashboard = ({ onPageChange }) => {
   const [user, setUser] = useState(null);
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [recentMarshals, setRecentMarshals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // تبدأ بدون loading
+  const [statsLoading, setStatsLoading] = useState(false); // تبدأ بدون loading
+  const [pageReady, setPageReady] = useState(false);
+  
+  // بيانات افتراضية سريعة للعرض الفوري
   const [stats, setStats] = useState({
-    totalRaces: 0,
-    activeRaces: 0,
-    totalMarshalls: 0,
-    availableMarshalls: 0,
-    tracksInUse: 0,
-    upcomingEvents: 0
+    totalRaces: 8,
+    activeRaces: 3,
+    totalMarshalls: 2,
+    availableMarshalls: 2,
+    tracksInUse: 4,
+    upcomingEvents: 5
   });
 
   useEffect(() => {
+    // إعداد فوري للصفحة
     const userData = localStorage.getItem('userData');
     if (userData) {
       setUser(JSON.parse(userData));
     }
     
-    // جلب المارشال الحديثين والإحصائيات
-    fetchRecentMarshals();
-    fetchDashboardStats();
+    // عرض الصفحة فوراً مع البيانات الافتراضية
+    setPageReady(true);
+    
+    // جلب البيانات الحقيقية في الخلفية بدون إعاقة العرض
+    setTimeout(() => {
+      fetchRecentMarshals();
+      fetchDashboardStats();
+    }, 100);
   }, []);
 
   const fetchDashboardStats = async () => {
@@ -117,8 +127,13 @@ const ManagerDashboard = ({ onPageChange }) => {
     setShowCreateEvent(false);
   };
 
-  if (!user) {
-    return <div>Loading... | جاري التحميل...</div>;
+  // عرض loading فقط إذا لم تكن الصفحة جاهزة
+  if (!pageReady || !user) {
+    return (
+      <div className="page-loading-overlay">
+        <LoadingSpinner message="جاري تحضير لوحة التحكم..." size="large" />
+      </div>
+    );
   }
 
   return (
