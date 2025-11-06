@@ -7,10 +7,12 @@ const MarshalManagement = ({ onPageChange }) => {
   const [editingMarshal, setEditingMarshal] = useState(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     phone: '',
+    nationality: 'الكويت',
+    marshalNumber: '',
     experience: 'مبتدئ',
     specializations: [],
     certifications: [],
@@ -117,7 +119,7 @@ const MarshalManagement = ({ onPageChange }) => {
       const formData = new FormData();
       formData.append('profileImage', imageFile);
 
-      const response = await fetch(`https://kmt-event-management.onrender.com/api/marshals/${marshalId}/upload-image`, {
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/users/marshals/${marshalId}/upload-image`, {
         method: 'POST',
         body: formData,
       });
@@ -144,8 +146,8 @@ const MarshalManagement = ({ onPageChange }) => {
 
     try {
       const url = editingMarshal 
-        ? `https://kmt-event-management.onrender.com/api/marshals/${editingMarshal._id}`
-        : 'https://kmt-event-management.onrender.com/api/marshals/register';
+        ? `https://kmt-event-management.onrender.com/api/users/marshals/${editingMarshal.id}`
+        : 'https://kmt-event-management.onrender.com/api/users/marshals';
       
       const method = editingMarshal ? 'PUT' : 'POST';
       
@@ -160,9 +162,11 @@ const MarshalManagement = ({ onPageChange }) => {
       // إزالة الصورة من البيانات المرسلة لأنها ستُرفع منفصلة
       delete submitData.profileImage;
 
+      const token = localStorage.getItem('token');
       const response = await fetch(url, {
         method,
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(submitData),
@@ -209,10 +213,12 @@ const MarshalManagement = ({ onPageChange }) => {
   // إعادة تعيين النموذج
   const resetForm = () => {
     setFormData({
-      name: '',
+      fullName: '',
       email: '',
       password: '',
       phone: '',
+      nationality: 'الكويت',
+      marshalNumber: '',
       experience: 'مبتدئ',
       specializations: [],
       certifications: [],
@@ -227,10 +233,12 @@ const MarshalManagement = ({ onPageChange }) => {
   const editMarshal = (marshal) => {
     setEditingMarshal(marshal);
     setFormData({
-      name: marshal.name || '',
+      fullName: marshal.fullName || marshal.name || '',
       email: marshal.email || '',
       password: '', // نتركها فارغة عند التحديث
       phone: marshal.phone || '',
+      nationality: marshal.nationality || 'الكويت',
+      marshalNumber: marshal.marshalNumber || '',
       experience: marshal.experience || 'مبتدئ',
       specializations: marshal.specializations || [],
       certifications: marshal.certifications || [],
@@ -248,8 +256,12 @@ const MarshalManagement = ({ onPageChange }) => {
 
     try {
       setLoading(true);
-      const response = await fetch(`https://kmt-event-management.onrender.com/api/marshals/${id}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://kmt-event-management.onrender.com/api/users/marshals/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -331,9 +343,32 @@ const MarshalManagement = ({ onPageChange }) => {
                   <label>📝 الاسم الكامل:</label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="أدخل اسم المارشال"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    placeholder="أدخل اسم المارشال الكامل"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>🔢 رقم المارشال:</label>
+                  <input
+                    type="text"
+                    value={formData.marshalNumber}
+                    onChange={(e) => setFormData(prev => ({ ...prev, marshalNumber: e.target.value }))}
+                    placeholder="مثال: 150"
+                    required={!editingMarshal}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>🌍 الجنسية:</label>
+                  <input
+                    type="text"
+                    value={formData.nationality}
+                    onChange={(e) => setFormData(prev => ({ ...prev, nationality: e.target.value }))}
+                    placeholder="مثال: الكويت"
+                    required
                   />
                 </div>
 
@@ -481,7 +516,7 @@ const MarshalManagement = ({ onPageChange }) => {
 
         <div className="marshals-grid">
           {marshals.map(marshal => (
-            <div key={marshal._id} className="marshal-card">
+            <div key={marshal.id || marshal._id} className="marshal-card">
               <div className="marshal-image-container">
                 {marshal.profileImage ? (
                   <img 
@@ -503,13 +538,11 @@ const MarshalManagement = ({ onPageChange }) => {
               </div>
               
               <div className="marshal-header">
-                <h3>{marshal.name || 'غير محدد'}</h3>
+                <h3>{marshal.fullName || marshal.name || 'غير محدد'}</h3>
+                <div className="marshal-number">رقم: {marshal.marshalNumber || 'غير محدد'}</div>
                 <div className="marshal-status">
                   <span className={`status-badge ${marshal.status}`}>
-                    {marshal.status}
-                  </span>
-                  <span className={`availability-badge ${marshal.availability}`}>
-                    {marshal.availability}
+                    {marshal.status === 'active' ? 'نشط' : marshal.status === 'pending' ? 'في الانتظار' : marshal.status}
                   </span>
                 </div>
               </div>
@@ -517,7 +550,8 @@ const MarshalManagement = ({ onPageChange }) => {
               <div className="marshal-info">
                 <p><strong>📧 الإيميل:</strong> {marshal.email || 'غير محدد'}</p>
                 <p><strong>📱 الهاتف:</strong> {marshal.phone || 'غير محدد'}</p>
-                <p><strong>⭐ الخبرة:</strong> {marshal.experience}</p>
+                <p><strong>🌍 الجنسية:</strong> {marshal.nationality || 'غير محدد'}</p>
+                <p><strong>⭐ الخبرة:</strong> {marshal.experience || 'مبتدئ'}</p>
                 <p><strong>🏆 التخصصات:</strong> {marshal.specializations?.length ? marshal.specializations.join(', ') : 'لا يوجد'}</p>
                 {marshal.notes && <p><strong>📝 ملاحظات:</strong> {marshal.notes}</p>}
               </div>
@@ -532,7 +566,7 @@ const MarshalManagement = ({ onPageChange }) => {
                 </button>
                 <button 
                   className="delete-button"
-                  onClick={() => deleteMarshal(marshal._id)}
+                  onClick={() => deleteMarshal(marshal.id || marshal._id)}
                   disabled={loading}
                 >
                   🗑️ حذف
