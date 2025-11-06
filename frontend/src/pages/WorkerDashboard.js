@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import './WorkerDashboard.css';
+import WorkerAnalytics from '../components/WorkerAnalytics';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './KMT-Original.css';
 import './Formula-Enhancement.css';
 import AvailableRaces from '../components/AvailableRaces';
@@ -187,7 +192,16 @@ const WorkerDashboard = ({ onPageChange }) => {
   };
 
   if (!user) {
-    return <div>Loading... | جاري التحميل...</div>;
+    return (
+      <div className="page-loading-overlay">
+        <LoadingSpinner 
+          message="🏎️ جاري تحميل لوحة تحكم العامل..."
+          size="large"
+          style="formula"
+          rpm="WRK"
+        />
+      </div>
+    );
   }
 
   // التنقل بين الصفحات

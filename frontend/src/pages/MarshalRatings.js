@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MarshalCard from '../components/MarshalCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './KMT-Original.css';
 import '../styles/MarshalCard.css';
 
@@ -137,10 +138,13 @@ const MarshalRatings = ({ onPageChange }) => {
 
   if (isLoading) {
     return (
-      <div className="kmt-page">
-        <div className="loading-container">
-          <div className="loading-spinner">⏳ جاري تحميل تقييمات المارشال...</div>
-        </div>
+      <div className="page-loading-overlay">
+        <LoadingSpinner 
+          message="⭐ جاري تحميل تقييمات المارشال..."
+          size="large"
+          style="formula"
+          rpm="STS"
+        />
       </div>
     );
   }

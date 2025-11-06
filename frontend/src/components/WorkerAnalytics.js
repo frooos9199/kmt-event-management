@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LoadingSpinner from './LoadingSpinner';
 import './WorkerAnalytics.css';
 
 const WorkerAnalytics = () => {
@@ -69,7 +70,16 @@ const WorkerAnalytics = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading Analytics... | جاري تحميل الإحصائيات...</div>;
+    return (
+      <div className="analytics-loading-container">
+        <LoadingSpinner 
+          message="📊 جاري تحميل إحصائيات الأداء..."
+          size="medium"
+          style="default"
+          rpm="STS"
+        />
+      </div>
+    );
   }
 
   return (

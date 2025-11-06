@@ -383,8 +383,39 @@
 
 /* أنيميشن وميض العداد الرقمي */
 @keyframes counterFlicker {
-  0% { opacity: 1; }
-  100% { opacity: 0.8; }
+  0%, 100% { 
+    opacity: 1; 
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.8);
+  }
+  50% { 
+    opacity: 0.8; 
+    text-shadow: 0 0 10px rgba(76, 175, 80, 1);
+  }
+}
+
+/* تحسينات إضافية لصفحات الويب */
+.analytics-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+/* تحسينات للصفحات المختلفة */
+.page-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
 /* تحسين الرسالة مع أيقونة */

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './KMT-Original.css';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import LoadingSpinner from '../components/LoadingSpinner';
+import './MarshalProfile.css';
 
 const MarshalProfile = ({ onPageChange }) => {
   const [user, setUser] = useState(null);
@@ -229,7 +232,16 @@ const MarshalProfile = ({ onPageChange }) => {
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <div className="page-loading-overlay">
+        <LoadingSpinner 
+          message="👤 جاري تحميل ملف المارشال..."
+          size="large"
+          style="default"
+          rpm="MAR"
+        />
+      </div>
+    );
   }
 
   return (

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import LoadingSpinner from '../components/LoadingSpinner';
+import './RaceManagement.css';
 import MarshalCard from '../components/MarshalCard';
 import './KMT-Original.css';
 import '../styles/MarshalCard.css';
@@ -108,10 +112,13 @@ const RaceManagement = ({ onPageChange }) => {
 
   if (isLoading) {
     return (
-      <div className="kmt-page">
-        <div className="loading-container">
-          <div className="loading-spinner">⏳ جاري تحميل بيانات السباقات...</div>
-        </div>
+      <div className="page-loading-overlay">
+        <LoadingSpinner 
+          message="🏁 جاري تحميل بيانات السباقات..."
+          size="large"
+          style="default"
+          rpm="RCE"
+        />
       </div>
     );
   }
