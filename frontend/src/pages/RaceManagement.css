@@ -1,0 +1,168 @@
+/* RaceManagement Styles */
+.race-management {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: white;
+}
+
+.race-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.race-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.race-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-card h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #4CAF50;
+}
+
+.stat-card p {
+  opacity: 0.8;
+}
+
+.races-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.race-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.race-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.race-card h3 {
+  color: #4CAF50;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.race-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.race-info span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.race-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: #4CAF50;
+}
+
+.btn-primary:hover {
+  background: #45a049;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-danger {
+  background: #f44336;
+}
+
+.btn-danger:hover {
+  background: #da190b;
+}
+
+/* Loading Styles */
+.page-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .race-management {
+    padding: 1rem;
+  }
+  
+  .race-header h1 {
+    font-size: 2rem;
+  }
+  
+  .race-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .races-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .race-actions {
+    flex-direction: column;
+  }
+}
