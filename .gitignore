@@ -49,5 +49,5 @@ coverage/
 tmp/
 temp/
 
-# Railway
-.railway/
+# Render
+.render/
