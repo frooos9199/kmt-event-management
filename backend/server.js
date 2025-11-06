@@ -185,6 +185,36 @@ app.post('/api/users/create-bulk-marshals', (req, res) => {
   }
 });
 
+// إصلاح أسماء المارشال
+app.post('/api/marshals/fix-names', (req, res) => {
+  try {
+    const marshals = dataManager.getMarshals();
+    let fixedCount = 0;
+    
+    marshals.forEach(marshal => {
+      const correctNumber = marshal.marshalNumber;
+      const correctName = `مارشال رقم ${correctNumber}`;
+      
+      if (marshal.fullName !== correctName && !marshal.fullName.includes('أحمد') && !marshal.fullName.includes('محمد')) {
+        dataManager.updateMarshal(marshal.id, { fullName: correctName });
+        fixedCount++;
+      }
+    });
+    
+    res.json({ 
+      success: true, 
+      message: `تم إصلاح ${fixedCount} من أسماء المارشال`,
+      fixedCount 
+    });
+  } catch (error) {
+    console.error('Error fixing marshal names:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في إصلاح أسماء المارشال' 
+    });
+  }
+});
+
 // Marshal management routes
 app.get('/api/users/marshals', (req, res) => {
   try {
