@@ -215,6 +215,35 @@ app.post('/api/marshals/fix-names', (req, res) => {
   }
 });
 
+// تحديث بيانات المارشال
+app.put('/api/users/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    const updatedMarshal = dataManager.updateMarshal(id, updateData);
+    
+    if (updatedMarshal) {
+      res.json({
+        success: true,
+        message: 'تم تحديث بيانات المارشال بنجاح',
+        marshal: updatedMarshal
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'المارشال غير موجود'
+      });
+    }
+  } catch (error) {
+    console.error('Error updating marshal:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'خطأ في تحديث البيانات' 
+    });
+  }
+});
+
 // Marshal management routes
 app.get('/api/users/marshals', (req, res) => {
   try {
