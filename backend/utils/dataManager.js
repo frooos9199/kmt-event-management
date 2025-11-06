@@ -80,6 +80,22 @@ const generateInitialMarshals = () => {
     lastLogin: new Date().toISOString()
   };
   
+  // إضافة مارشال 150 بالاسم الصحيح
+  marshals[50] = {
+    id: 'KMT-150',
+    marshalNumber: '150',
+    fullName: 'مارشال رقم 150',
+    email: 'marshal150@kmt.com',
+    phone: '+96599000150',
+    nationality: 'الكويت',
+    status: 'active',
+    password: '123456',
+    hasChangedPassword: false,
+    createdAt: new Date().toISOString(),
+    lastLogin: null,
+    marshallInfo: {}
+  };
+  
   return marshals;
 };
 
