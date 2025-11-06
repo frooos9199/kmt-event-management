@@ -13,6 +13,7 @@ import MarshalsManagement from './components/MarshalsManagement';
 import ApplicationsManagement from './components/ApplicationsManagement';
 import Notifications from './components/Notifications';
 import RacesManagement from './pages/RacesManagement';
+import SimpleMarshalTest from './components/SimpleMarshalTest';
 import './App.css';
 
 function App() {
@@ -80,6 +81,8 @@ function App() {
         return <MarshalRatings onPageChange={handlePageChange} />;
       case 'stats-detail':
         return <StatsDetail onPageChange={handlePageChange} statsType={statsType} />;
+      case 'test-marshal':
+        return <SimpleMarshalTest onPageChange={handlePageChange} />;
       default:
         return <Auth onPageChange={handlePageChange} />;
     }
