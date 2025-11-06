@@ -1,7 +1,7 @@
 {
   "name": "kmt-frontend",
-  "version": "1.0.0",
-  "description": "Kuwait Motor Town Event Management Frontend",
+  "version": "1.0.1",
+  "description": "Kuwait Motor Town Event Management Frontend - RPM Loading System",
   "homepage": ".",
   "private": true,
   "dependencies": {
