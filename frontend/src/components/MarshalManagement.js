@@ -6,6 +6,8 @@ const MarshalManagement = ({ onPageChange }) => {
   const [showForm, setShowForm] = useState(false);
   const [editingMarshal, setEditingMarshal] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  console.log('🏁 تم تحميل مكون إدارة المارشال، عدد المارشال:', marshals.length);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -40,36 +42,37 @@ const MarshalManagement = ({ onPageChange }) => {
       setLoading(true);
       const token = localStorage.getItem('token');
       
-      // إضافة timeout للطلب
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 ثواني timeout
+      console.log('🔍 جاري جلب المارشال...', { token: !!token });
       
       const response = await fetch('https://kmt-event-management.onrender.com/api/users/marshals', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        },
-        signal: controller.signal
+        }
       });
       
-      clearTimeout(timeoutId);
+      console.log('📡 استجابة الخادم:', response.status, response.ok);
       
       if (response.ok) {
         const data = await response.json();
+        console.log('📊 البيانات المستلمة:', data);
+        
         // إصلاح تنسيق البيانات
         const marshalsData = data.marshals || data || [];
+        console.log('👥 المارشال المعالج:', marshalsData);
+        
         setMarshals(marshalsData);
+        
+        if (marshalsData.length === 0) {
+          console.log('⚠️ لا يوجد مارشال في النظام');
+        }
       } else {
-        console.error('فشل في جلب المارشال:', response.status);
-        // استخدام بيانات وهمية في حالة الفشل
-        setMarshals(getMockMarshals());
-        alert('تم تحميل البيانات التجريبية');
+        console.error('❌ فشل في جلب المارشال:', response.status, response.statusText);
+        alert('فشل في جلب بيانات المارشال. تحقق من اتصال الإنترنت.');
       }
     } catch (error) {
-      console.error('خطأ في جلب المارشال:', error);
-      // استخدام بيانات وهمية في حالة الخطأ
-      setMarshals(getMockMarshals());
-      alert('تم تحميل البيانات التجريبية');
+      console.error('💥 خطأ في جلب المارشال:', error);
+      alert('خطأ في الاتصال بالخادم: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -110,8 +113,46 @@ const MarshalManagement = ({ onPageChange }) => {
   ];
 
   useEffect(() => {
-    fetchMarshals();
+    const token = localStorage.getItem('token');
+    console.log('🚀 تشغيل صفحة إدارة المارشال:', { token: !!token });
+    
+    if (token) {
+      fetchMarshals();
+    } else {
+      console.log('⚠️ لا يوجد رمز تفويض - يجب تسجيل الدخول أولاً');
+      // محاولة تسجيل دخول تلقائي للاختبار
+      autoLogin();
+    }
   }, []);
+
+  // تسجيل دخول تلقائي للاختبار
+  const autoLogin = async () => {
+    try {
+      console.log('🔐 محاولة تسجيل دخول تلقائي...');
+      const response = await fetch('https://kmt-event-management.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'admin@kmt.com',
+          password: 'admin123'
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userData', JSON.stringify(data.user));
+          console.log('✅ تم تسجيل الدخول التلقائي بنجاح');
+          fetchMarshals();
+        }
+      }
+    } catch (error) {
+      console.log('❌ فشل في تسجيل الدخول التلقائي:', error);
+    }
+  };
 
   // معالجة رفع الصورة
   const handleImageUpload = async (marshalId, imageFile) => {
@@ -508,22 +549,50 @@ const MarshalManagement = ({ onPageChange }) => {
         {loading && !showForm && <div className="loading">⏳ جاري التحميل...</div>}
         
         {marshals.length === 0 && !loading && (
-          <div className="empty-state">
-            <h3>📝 لا يوجد مارشال مسجلين</h3>
-            <p>ابدأ بإضافة أول مارشال</p>
+          <div className="empty-state" style={{
+            textAlign: 'center',
+            padding: '40px',
+            border: '2px dashed #ddd',
+            borderRadius: '12px',
+            backgroundColor: '#f8f9fa',
+            margin: '20px 0'
+          }}>
+            <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🏁</div>
+            <h3 style={{ color: '#e31e24', marginBottom: '10px' }}>📝 لا يوجد مارشال مسجلين</h3>
+            <p style={{ color: '#666', marginBottom: '20px' }}>ابدأ بإضافة أول مارشال للنظام</p>
+            <p style={{ fontSize: '0.9rem', color: '#999' }}>
+              💡 تلميح: تأكد من تسجيل الدخول والاتصال بالإنترنت
+            </p>
+            <button 
+              onClick={() => setShowForm(true)}
+              style={{
+                marginTop: '15px',
+                padding: '10px 20px',
+                backgroundColor: '#e31e24',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '1rem'
+              }}
+            >
+              ➕ إضافة مارشال جديد
+            </button>
           </div>
         )}
 
         <div className="marshals-grid">
           {marshals.map(marshal => (
             <div key={marshal.id || marshal._id} className="marshal-card">
+              {/* صورة المارشال */}
               <div className="marshal-image-container">
                 {marshal.profileImage ? (
                   <img 
                     src={`https://kmt-event-management.onrender.com/uploads/marshals/${marshal.profileImage}`}
-                    alt={marshal.name || 'صورة المارشال'}
+                    alt={marshal.fullName || 'صورة المارشال'}
                     className="marshal-image"
                     onError={(e) => {
+                      console.log('❌ فشل تحميل الصورة:', marshal.profileImage);
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'flex';
                     }}
@@ -531,18 +600,47 @@ const MarshalManagement = ({ onPageChange }) => {
                 ) : null}
                 <div 
                   className="marshal-avatar" 
-                  style={{ display: marshal.profileImage ? 'none' : 'flex' }}
+                  style={{ 
+                    display: marshal.profileImage ? 'none' : 'flex',
+                    width: '100%',
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#f0f0f0',
+                    fontSize: '2rem'
+                  }}
                 >
                   👤
                 </div>
               </div>
               
+              {/* معلومات المارشال */}
               <div className="marshal-header">
-                <h3>{marshal.fullName || marshal.name || 'غير محدد'}</h3>
-                <div className="marshal-number">رقم: {marshal.marshalNumber || 'غير محدد'}</div>
+                <h3 style={{ margin: '0 0 8px 0', color: '#e31e24', fontSize: '1.2rem' }}>
+                  {marshal.fullName || marshal.name || 'غير محدد'}
+                </h3>
+                <div className="marshal-number" style={{ 
+                  backgroundColor: '#e31e24', 
+                  color: 'white', 
+                  padding: '4px 8px', 
+                  borderRadius: '12px', 
+                  fontSize: '0.9rem',
+                  display: 'inline-block',
+                  marginBottom: '8px'
+                }}>
+                  🏁 رقم: {marshal.marshalNumber || 'غير محدد'}
+                </div>
                 <div className="marshal-status">
-                  <span className={`status-badge ${marshal.status}`}>
-                    {marshal.status === 'active' ? 'نشط' : marshal.status === 'pending' ? 'في الانتظار' : marshal.status}
+                  <span className={`status-badge ${marshal.status || 'pending'}`} style={{
+                    padding: '4px 12px',
+                    borderRadius: '15px',
+                    fontSize: '0.85rem',
+                    fontWeight: 'bold',
+                    backgroundColor: marshal.status === 'active' ? '#d4edda' : '#fff3cd',
+                    color: marshal.status === 'active' ? '#155724' : '#856404',
+                    border: `1px solid ${marshal.status === 'active' ? '#c3e6cb' : '#ffeaa7'}`
+                  }}>
+                    {marshal.status === 'active' ? '✅ نشط' : marshal.status === 'pending' ? '⏳ في الانتظار' : marshal.status || 'غير محدد'}
                   </span>
                 </div>
               </div>
