@@ -1,0 +1,129 @@
+{
+  "systemInfo": {
+    "projectName": "KMT Event Management System",
+    "version": "2.1.0",
+    "lastUpdate": "2025-11-06T06:04:12.000Z",
+    "status": "production",
+    "uptime": "99.9%"
+  },
+  "deploymentServices": {
+    "frontend": {
+      "provider": "Vercel",
+      "url": "https://kmt-event-management.vercel.app",
+      "technology": "React.js",
+      "updateTime": "30-60 seconds",
+      "autoDeployment": true,
+      "cdnEnabled": true
+    },
+    "backend": {
+      "provider": "Render",
+      "url": "https://kmt-event-management.onrender.com",
+      "technology": "Node.js + Express",
+      "updateTime": "2-5 minutes",
+      "persistentStorage": true,
+      "httpsEnabled": true
+    },
+    "repository": {
+      "provider": "GitHub", 
+      "url": "https://github.com/frooos9199/kmt-event-management",
+      "branch": "main",
+      "lastCommit": "3ff6ca5d74580ecf752192b318faf2a465784c8a"
+    }
+  },
+  "updateSchedule": {
+    "lastUpdate": {
+      "date": "2025-11-06",
+      "time": "09:04:12 GMT+3",
+      "type": "security and permissions",
+      "description": "تطبيق نظام الأذونات - التحديث والحذف للأدمن فقط مع حفظ دائم للبيانات"
+    },
+    "nextScheduledUpdate": {
+      "date": "2025-11-08",
+      "estimatedTime": "evening",
+      "plannedFeatures": [
+        "Advanced statistics dashboard",
+        "Email notification system", 
+        "PWA mobile support",
+        "Automatic backup system"
+      ]
+    },
+    "regularUpdates": {
+      "frequency": "weekly",
+      "day": "Wednesday",
+      "type": "maintenance and bug fixes"
+    }
+  },
+  "partnerServices": {
+    "hosting": [
+      {
+        "name": "Vercel",
+        "role": "Frontend hosting and CDN",
+        "website": "https://vercel.com",
+        "features": ["Auto-deployment", "Global CDN", "React.js support"]
+      },
+      {
+        "name": "Render", 
+        "role": "Backend hosting and API",
+        "website": "https://render.com",
+        "features": ["Node.js support", "HTTPS", "Persistent storage"]
+      }
+    ],
+    "development": [
+      {
+        "name": "GitHub",
+        "role": "Code repository and version control", 
+        "website": "https://github.com",
+        "features": ["Git version control", "Issue tracking", "CI/CD"]
+      }
+    ],
+    "technologies": [
+      {
+        "name": "React.js",
+        "role": "Frontend framework",
+        "version": "18.x"
+      },
+      {
+        "name": "Node.js",
+        "role": "Backend runtime", 
+        "version": "18.x"
+      },
+      {
+        "name": "Express.js",
+        "role": "Web framework",
+        "version": "4.x"
+      }
+    ]
+  },
+  "supportInfo": {
+    "developer": "frooos9199",
+    "responseTime": "2-6 hours",
+    "supportHours": "24/7 for critical issues",
+    "emergencyUpdates": "immediate deployment when needed",
+    "monitoring": {
+      "serverStatus": "continuous",
+      "errorDetection": "automatic with notifications", 
+      "performanceAnalysis": "weekly reports",
+      "backups": "daily automatic"
+    }
+  },
+  "currentFeatures": {
+    "security": {
+      "adminOnlyOperations": true,
+      "jwtAuthentication": true,
+      "dataProtection": true,
+      "operationLogging": true
+    },
+    "dataManagement": {
+      "persistentStorage": true,
+      "automaticBackups": true,
+      "deletionArchive": true,
+      "auditTrail": true
+    },
+    "userInterface": {
+      "arabicRTL": true,
+      "responsiveDesign": true,
+      "errorHandling": true,
+      "loadingStates": true
+    }
+  }
+}
