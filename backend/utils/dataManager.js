@@ -246,7 +246,52 @@ const updateRace = (raceId, updates) => {
     return saveRaces(races);
   } catch (error) {
     console.error('Error updating race:', error);
-    return false;
+    throw error;
+  }
+};
+
+// تسجيل عمليات الحذف
+const logDeletion = (type, deletionData) => {
+  try {
+    const LOGS_FILE = path.join(DATA_DIR, 'deletion_logs.json');
+    let logs = [];
+    
+    // قراءة السجلات الموجودة
+    if (fs.existsSync(LOGS_FILE)) {
+      const logData = fs.readFileSync(LOGS_FILE, 'utf8');
+      logs = JSON.parse(logData);
+    }
+    
+    // إضافة السجل الجديد
+    logs.push({
+      type: type,
+      ...deletionData,
+      logId: `LOG-${Date.now()}`
+    });
+    
+    // حفظ السجلات
+    fs.writeFileSync(LOGS_FILE, JSON.stringify(logs, null, 2), 'utf8');
+    console.log('📝 Deletion logged successfully:', type, deletionData.marshalId || deletionData.raceId);
+    
+  } catch (error) {
+    console.error('❌ Error logging deletion:', error);
+  }
+};
+
+// الحصول على سجلات الحذف
+const getDeletionLogs = () => {
+  try {
+    const LOGS_FILE = path.join(DATA_DIR, 'deletion_logs.json');
+    
+    if (fs.existsSync(LOGS_FILE)) {
+      const logData = fs.readFileSync(LOGS_FILE, 'utf8');
+      return JSON.parse(logData);
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('❌ Error reading deletion logs:', error);
+    return [];
   }
 };
 
@@ -262,5 +307,7 @@ module.exports = {
   saveRaces,
   addRace,
   deleteRace,
-  updateRace
+  updateRace,
+  logDeletion,
+  getDeletionLogs
 };

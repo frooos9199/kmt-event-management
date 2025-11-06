@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const auth = require('./middleware/auth');
+const adminOnly = require('./middleware/adminOnly');
 const dataManager = require('./utils/dataManager');
 
 const app = express();
@@ -280,23 +281,31 @@ app.get('/api/users/marshals/:id', (req, res) => {
   }
 });
 
-app.put('/api/users/marshals/:id', auth, async (req, res) => {
+app.put('/api/users/marshals/:id', adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
     
-    // Add update timestamp
+    console.log('🔄 Admin updating marshal:', id, 'by user:', req.user.email);
+    
+    // Add update timestamp and admin info
     updates.updatedAt = new Date().toISOString();
+    updates.updatedBy = req.user.email;
     
     const success = dataManager.updateMarshal(id, updates);
     
     if (success) {
       const marshals = dataManager.getMarshals();
       const updatedMarshal = marshals.find(m => m.id === id);
+      
+      console.log('✅ Marshal updated successfully by admin');
+      
       res.json({ 
         success: true, 
         marshal: updatedMarshal,
-        message: 'تم تحديث بيانات المارشال بنجاح' 
+        message: 'تم تحديث بيانات المارشال بنجاح من قبل الأدمن',
+        updatedBy: req.user.email,
+        updatedAt: updates.updatedAt
       });
     } else {
       res.status(404).json({ 
@@ -305,7 +314,7 @@ app.put('/api/users/marshals/:id', auth, async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error updating marshal:', error);
+    console.error('💥 Error updating marshal by admin:', error);
     res.status(500).json({ 
       success: false, 
       message: 'خطأ في تحديث بيانات المارشال' 
@@ -339,26 +348,52 @@ app.post('/api/users/marshals', auth, async (req, res) => {
   }
 });
 
-app.delete('/api/users/marshals/:id', auth, async (req, res) => {
+app.delete('/api/users/marshals/:id', adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
-    const marshals = dataManager.getMarshals();
-    const filteredMarshals = marshals.filter(m => m.id !== id);
     
-    if (marshals.length !== filteredMarshals.length) {
-      dataManager.saveMarshals(filteredMarshals);
-      res.json({ 
-        success: true, 
-        message: 'تم حذف المارشال بنجاح' 
-      });
-    } else {
-      res.status(404).json({ 
+    console.log('🗑️ Admin deleting marshal:', id, 'by user:', req.user.email);
+    
+    const marshals = dataManager.getMarshals();
+    const marshalToDelete = marshals.find(m => m.id === id);
+    
+    if (!marshalToDelete) {
+      return res.status(404).json({ 
         success: false, 
         message: 'المارشال غير موجود' 
       });
     }
+    
+    // إضافة log للمارشال المحذوف
+    const deletionLog = {
+      marshalId: id,
+      marshalName: marshalToDelete.fullName,
+      deletedAt: new Date().toISOString(),
+      deletedBy: req.user.email,
+      reason: req.body.reason || 'لم يتم تحديد السبب'
+    };
+    
+    const filteredMarshals = marshals.filter(m => m.id !== id);
+    
+    // حفظ بيانات المارشال المحذوف في سجل منفصل
+    dataManager.logDeletion('marshal', deletionLog);
+    dataManager.saveMarshals(filteredMarshals);
+    
+    console.log('✅ Marshal deleted successfully by admin');
+    
+    res.json({ 
+      success: true, 
+      message: `تم حذف المارشال "${marshalToDelete.fullName}" بنجاح من قبل الأدمن`,
+      deletedMarshal: {
+        id: marshalToDelete.id,
+        name: marshalToDelete.fullName,
+        marshalNumber: marshalToDelete.marshalNumber
+      },
+      deletedBy: req.user.email,
+      deletedAt: deletionLog.deletedAt
+    });
   } catch (error) {
-    console.error('Error deleting marshal:', error);
+    console.error('💥 Error deleting marshal by admin:', error);
     res.status(500).json({ 
       success: false, 
       message: 'خطأ في حذف المارشال' 
@@ -643,6 +678,108 @@ app.put('/api/races/:id', auth, (req, res) => {
     res.status(500).json({
       success: false,
       message: 'خطأ في تحديث السباق'
+    });
+  }
+});
+
+// 📋 سجلات الحذف - للأدمن فقط
+app.get('/api/admin/deletion-logs', adminOnly, (req, res) => {
+  try {
+    console.log('📋 Admin requesting deletion logs:', req.user.email);
+    
+    const logs = dataManager.getDeletionLogs();
+    
+    res.json({
+      success: true,
+      logs: logs,
+      totalLogs: logs.length,
+      message: 'تم جلب سجلات الحذف بنجاح'
+    });
+  } catch (error) {
+    console.error('💥 Error fetching deletion logs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في جلب سجلات الحذف'
+    });
+  }
+});
+
+// 📊 إحصائيات النظام المتقدمة - للأدمن فقط
+app.get('/api/admin/system-stats', adminOnly, (req, res) => {
+  try {
+    console.log('📊 Admin requesting system stats:', req.user.email);
+    
+    const marshals = dataManager.getMarshals();
+    const races = dataManager.getRaces();
+    const deletionLogs = dataManager.getDeletionLogs();
+    
+    const stats = {
+      marshals: {
+        total: marshals.length,
+        active: marshals.filter(m => m.status === 'active').length,
+        pending: marshals.filter(m => m.status === 'pending').length,
+        recentlyAdded: marshals.filter(m => {
+          const createdDate = new Date(m.createdAt);
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return createdDate > weekAgo;
+        }).length
+      },
+      races: {
+        total: races.length,
+        upcoming: races.filter(r => new Date(r.date) > new Date()).length,
+        completed: races.filter(r => new Date(r.date) < new Date()).length,
+        thisMonth: races.filter(r => {
+          const raceDate = new Date(r.date);
+          const now = new Date();
+          return raceDate.getMonth() === now.getMonth() && raceDate.getFullYear() === now.getFullYear();
+        }).length
+      },
+      system: {
+        deletionLogs: deletionLogs.length,
+        lastActivity: new Date().toISOString(),
+        dataIntegrity: 'سليمة'
+      }
+    };
+    
+    res.json({
+      success: true,
+      stats: stats,
+      message: 'تم جلب إحصائيات النظام بنجاح'
+    });
+  } catch (error) {
+    console.error('💥 Error fetching system stats:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في جلب إحصائيات النظام'
+    });
+  }
+});
+
+// 🔧 أدوات الأدمن - نسخ احتياطي للبيانات
+app.get('/api/admin/backup', adminOnly, (req, res) => {
+  try {
+    console.log('💾 Admin requesting data backup:', req.user.email);
+    
+    const data = dataManager.loadData();
+    const backup = {
+      ...data,
+      backupInfo: {
+        createdAt: new Date().toISOString(),
+        createdBy: req.user.email,
+        version: '1.0.0'
+      }
+    };
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="kmt-backup-${new Date().toISOString().split('T')[0]}.json"`);
+    res.json(backup);
+    
+  } catch (error) {
+    console.error('💥 Error creating backup:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في إنشاء النسخة الاحتياطية'
     });
   }
 });

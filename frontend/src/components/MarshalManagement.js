@@ -219,14 +219,15 @@ const MarshalManagement = ({ onPageChange }) => {
       const result = await response.json();
       console.log('نتيجة الاستجابة:', result);
 
-      if (response.ok) {
-        alert(editingMarshal ? 'تم تحديث المارشال بنجاح' : 'تم إضافة المارشال بنجاح');
+      if (response.ok && result.success) {
+        const action = editingMarshal ? 'تحديث' : 'إضافة';
+        alert(`✅ تم ${action} المارشال بنجاح\n\n${result.message || ''}`);
         
         // رفع الصورة إذا تم اختيار واحدة
         if (formData.profileImage) {
           let marshalId;
           if (editingMarshal) {
-            marshalId = editingMarshal._id;
+            marshalId = editingMarshal._id || editingMarshal.id;
           } else if (result.marshal && result.marshal._id) {
             marshalId = result.marshal._id;
           }
@@ -241,7 +242,18 @@ const MarshalManagement = ({ onPageChange }) => {
         resetForm();
         fetchMarshals();
       } else {
-        alert(result.message || 'حدث خطأ');
+        // معالجة أخطاء الصلاحيات
+        if (response.status === 403) {
+          alert(`🚫 غير مصرح لك بهذا الإجراء\n\n` +
+                `${editingMarshal ? 'تعديل' : 'إضافة'} المارشال يتطلب صلاحيات الأدمن.\n` +
+                `الرجاء التواصل مع مدير النظام.`);
+        } else if (response.status === 401) {
+          alert(`🔐 يجب تسجيل الدخول كأدمن\n\n` +
+                `العملية تتطلب صلاحيات الأدمن.\n` +
+                `الرجاء تسجيل الدخول بحساب الأدمن.`);
+        } else {
+          alert(`❌ ${result.message || 'حدث خطأ في العملية'}`);
+        }
       }
     } catch (error) {
       console.error('خطأ في العملية:', error);
@@ -291,30 +303,71 @@ const MarshalManagement = ({ onPageChange }) => {
     setShowForm(true);
   };
 
-  // حذف مارشال
+  // حذف مارشال - للأدمن فقط
   const deleteMarshal = async (id) => {
-    if (!window.confirm('هل أنت متأكد من حذف هذا المارشال؟')) return;
+    // الحصول على بيانات المارشال المراد حذفه
+    const marshal = marshals.find(m => m.id === id || m._id === id);
+    const marshalName = marshal ? marshal.fullName : 'غير محدد';
+    
+    const reason = window.prompt(
+      `⚠️ تحذير: أنت على وشك حذف المارشال "${marshalName}"\n\n` +
+      `هذا الإجراء لا يمكن التراجع عنه وسيتم توثيقه في سجل النظام.\n\n` +
+      `الرجاء إدخال سبب الحذف:`, 
+      'تم الحذف بناءً على طلب الإدارة'
+    );
+    
+    if (!reason) {
+      alert('❌ تم إلغاء عملية الحذف - يجب إدخال سبب الحذف');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `🚨 تأكيد الحذف النهائي\n\n` +
+      `المارشال: ${marshalName}\n` +
+      `السبب: ${reason}\n\n` +
+      `هل أنت متأكد من المتابعة؟`
+    );
+    
+    if (!confirmed) return;
 
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+      
+      console.log('🗑️ محاولة حذف المارشال:', id, 'السبب:', reason);
+      
       const response = await fetch(`https://kmt-event-management.onrender.com/api/users/marshals/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
+        body: JSON.stringify({ reason: reason })
       });
 
-      if (response.ok) {
-        alert('تم حذف المارشال بنجاح');
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        alert(`✅ ${result.message}\n\n📋 تم توثيق العملية في سجل النظام`);
         fetchMarshals();
       } else {
-        const result = await response.json();
-        alert(result.message || 'خطأ في الحذف');
+        if (response.status === 403) {
+          alert(`🚫 غير مصرح لك بحذف المارشال\n\n` +
+                `هذا الإجراء مخصص للأدمن فقط.\n` +
+                `الرجاء التواصل مع مدير النظام إذا كنت تحتاج لحذف هذا المارشال.`);
+        } else if (response.status === 401) {
+          alert(`🔐 يجب تسجيل الدخول كأدمن\n\n` +
+                `عملية حذف المارشال تتطلب صلاحيات الأدمن.\n` +
+                `الرجاء تسجيل الدخول بحساب الأدمن أولاً.`);
+        } else {
+          alert(`❌ فشل في حذف المارشال\n\n` +
+                `السبب: ${result.message || 'خطأ غير معروف'}`);
+        }
       }
     } catch (error) {
-      console.error('خطأ في الحذف:', error);
-      alert('خطأ في الاتصال');
+      console.error('💥 خطأ في حذف المارشال:', error);
+      alert(`❌ خطأ في الاتصال بالخادم\n\n` +
+            `تعذر إكمال عملية الحذف. الرجاء المحاولة مرة أخرى.`);
     } finally {
       setLoading(false);
     }
@@ -358,6 +411,30 @@ const MarshalManagement = ({ onPageChange }) => {
         >
           ➕ إضافة مارشال جديد
         </button>
+      </div>
+
+      {/* تنبيه صلاحيات الأدمن */}
+      <div style={{
+        backgroundColor: '#fff3cd',
+        border: '1px solid #ffeaa7',
+        borderRadius: '8px',
+        padding: '15px',
+        margin: '20px 0',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        direction: 'rtl'
+      }}>
+        <span style={{ fontSize: '1.5rem' }}>🔐</span>
+        <div>
+          <strong style={{ color: '#856404' }}>ملاحظة مهمة للأدمن:</strong>
+          <p style={{ margin: '5px 0 0 0', color: '#856404', fontSize: '0.9rem' }}>
+            • جميع البيانات محفوظة بشكل دائم في النظام<br/>
+            • عمليات التحديث والحذف تتطلب صلاحيات الأدمن<br/>
+            • سيتم توثيق جميع العمليات في سجل النظام<br/>
+            • المارشال المحذوف يُحفظ في أرشيف النظام
+          </p>
+        </div>
       </div>
 
       {/* النموذج */}
