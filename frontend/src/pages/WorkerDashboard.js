@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import './WorkerDashboard.css';
 import WorkerAnalytics from '../components/WorkerAnalytics';
 import LoadingSpinner from '../components/LoadingSpinner';
+import './WorkerDashboard.css';
 import './KMT-Original.css';
 import './Formula-Enhancement.css';
 import AvailableRaces from '../components/AvailableRaces';
