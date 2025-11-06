@@ -9,24 +9,71 @@ const MarshalsView = ({ onPageChange }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMarshal, setSelectedMarshal] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [recentUpdates, setRecentUpdates] = useState([]);
 
   useEffect(() => {
     fetchMarshals();
+    
+    // تحديث البيانات دورياً كل 30 ثانية
+    const interval = setInterval(() => {
+      fetchMarshals();
+    }, 30000);
+
+    // مستمع لأحداث الصفحة لتحديث البيانات عند العودة للصفحة
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchMarshals();
+      }
+    };
+
+    const handleFocus = () => {
+      fetchMarshals();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const fetchMarshals = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://kmt-event-management.onrender.com/api/users/marshals', {
+      const API_URL = process.env.REACT_APP_API_URL || 'https://kmt-event-management.onrender.com';
+      const response = await fetch(`${API_URL}/api/users/marshals`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
         }
       });
 
       if (response.ok) {
         const data = await response.json();
-        setMarshals(data);
-        setFilteredMarshals(data);
+        const marshalsArray = Array.isArray(data) ? data : (data.marshals || []);
+        
+        // ترتيب المارشال حسب آخر تحديث
+        const sortedMarshals = marshalsArray.sort((a, b) => {
+          const dateA = new Date(a.updatedAt || a.createdAt || 0);
+          const dateB = new Date(b.updatedAt || b.createdAt || 0);
+          return dateB - dateA;
+        });
+        
+        // تتبع التحديثات الحديثة
+        const now = new Date();
+        const thirtyMinutesAgo = new Date(now - 30 * 60 * 1000);
+        const recentlyUpdated = sortedMarshals.filter(marshal => {
+          const updateTime = new Date(marshal.updatedAt || marshal.createdAt || 0);
+          return updateTime > thirtyMinutesAgo && marshal.updatedAt;
+        });
+        
+        setRecentUpdates(recentlyUpdated);
+        setMarshals(sortedMarshals);
+        setFilteredMarshals(sortedMarshals);
       } else {
         console.error('خطأ في جلب المارشال');
       }
@@ -115,8 +162,19 @@ const MarshalsView = ({ onPageChange }) => {
           <div className="stat-card">
             <h3>المارشال النشطين</h3>
             <div className="stat-number">
-              {marshals.filter(m => m.marshallInfo?.trackSpecializations?.length > 0).length}
+              {marshals.filter(m => m.status === 'active').length}
             </div>
+          </div>
+          <div className="stat-card">
+            <h3>التحديثات الحديثة</h3>
+            <div className="stat-number" style={{color: '#28a745'}}>
+              {recentUpdates.length}
+            </div>
+            {recentUpdates.length > 0 && (
+              <small style={{fontSize: '10px', color: '#666'}}>
+                آخر 30 دقيقة
+              </small>
+            )}
           </div>
           <div className="stat-card">
             <h3>المارشال الخبراء</h3>
@@ -126,7 +184,48 @@ const MarshalsView = ({ onPageChange }) => {
           </div>
         </div>
 
-                  {/* شبكة المارشال */}
+        {/* إشعار التحديثات الحديثة */}
+        {recentUpdates.length > 0 && (
+          <div style={{
+            background: 'linear-gradient(135deg, #e8f5e8, #f0f8f0)',
+            border: '2px solid #28a745',
+            borderRadius: '12px',
+            padding: '15px',
+            marginBottom: '20px',
+            boxShadow: '0 4px 12px rgba(40, 167, 69, 0.1)'
+          }}>
+            <h3 style={{color: '#28a745', marginBottom: '10px', fontSize: '16px'}}>
+              🔄 تحديثات حديثة ({recentUpdates.length})
+            </h3>
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+              {recentUpdates.slice(0, 5).map(marshal => (
+                <span key={marshal.id} style={{
+                  background: '#28a745',
+                  color: 'white',
+                  padding: '4px 8px',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}>
+                  {marshal.fullName} - {new Date(marshal.updatedAt).toLocaleTimeString('ar-EG', {hour: '2-digit', minute: '2-digit'})}
+                </span>
+              ))}
+              {recentUpdates.length > 5 && (
+                <span style={{
+                  background: '#6c757d',
+                  color: 'white',
+                  padding: '4px 8px',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}>
+                  +{recentUpdates.length - 5} أكثر
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* شبكة المارشال */}
           <div className="marshals-grid">
             {filteredMarshals.map((marshal) => (
               <MarshalCard
