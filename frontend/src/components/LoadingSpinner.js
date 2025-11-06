@@ -2,7 +2,7 @@ import React from 'react';
 import './LoadingSpinner.css';
 
 const LoadingSpinner = ({ 
-  message = 'جاري التحميل...', 
+  message = '', 
   size = 'medium', 
   style = 'default',
   rpm = false 

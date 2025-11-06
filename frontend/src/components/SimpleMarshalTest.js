@@ -111,7 +111,7 @@ const SimpleMarshalTest = () => {
 
       {loading && (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-          ⏳ جاري التحميل...
+          ⏳
         </div>
       )}
 

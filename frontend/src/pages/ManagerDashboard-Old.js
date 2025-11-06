@@ -77,7 +77,7 @@ const ManagerDashboard = ({ onPageChange }) => {
   };
 
   if (!user) {
-    return <div>Loading... | جاري التحميل...</div>;
+    return <div></div>;
   }
 
   const renderNavigation = () => (
@@ -227,7 +227,7 @@ const ManagerDashboard = ({ onPageChange }) => {
         
         {loading ? (
           <div className="loading-container">
-            <div className="loading-spinner">⏳ جاري التحميل...</div>
+            <div></div>
           </div>
         ) : recentMarshals.length > 0 ? (
           <div className="recent-marshals-grid">

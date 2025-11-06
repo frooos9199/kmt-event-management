@@ -541,9 +541,7 @@ const ManagerDashboard = ({ onPageChange }) => {
           </div>
           
           {loading ? (
-            <div className="loading-container">
-              <div className="loading-spinner">⏳ جاري التحميل...</div>
-            </div>
+            <div></div>
           ) : recentMarshals.length > 0 ? (
             <div className="recent-marshals-grid">
               {recentMarshals.map((marshal) => (

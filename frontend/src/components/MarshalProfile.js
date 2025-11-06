@@ -135,7 +135,7 @@ const MarshalProfile = ({ onPageChange, onProfileUpdate }) => {
   };
 
   if (!user) {
-    return <div className="loading">جاري التحميل...</div>;
+    return <div></div>;
   }
 
   return (

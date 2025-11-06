@@ -270,9 +270,7 @@ const StatsDetail = ({ onPageChange, statsType }) => {
 
       <div className="content-section">
         {loading ? (
-          <div className="loading-container">
-            <div className="loading-spinner">⏳ جاري التحميل...</div>
-          </div>
+          <div></div>
         ) : data.length > 0 ? (
           renderContent()
         ) : (
